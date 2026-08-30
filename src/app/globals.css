@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7f9;
+  --foreground: #1c1c22;
+  --brand: #334155;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible keyboard focus for all interactive elements. */
+:where(a, button, input, select, textarea, summary, [tabindex]) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #c7d2fe;
+  color: #1e1b4b;
+}
+
+/* Refined, subtle scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 transparent;
+}
+
+/* Automatic red borders on fields flagged with a validation error. */
+.field-error input,
+.field-error select,
+.field-error textarea {
+  border-color: #fca5a5;
+}
+.field-error input:focus,
+.field-error select:focus,
+.field-error textarea:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgb(239 68 68 / 0.15);
+}

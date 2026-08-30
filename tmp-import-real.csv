@@ -1,0 +1,4 @@
+CMG Reference,Client Reference,Target,Target Nature,Target By,Brand,Investigation Date,Case Status,Approval Status,Notes
+IMP-TEST-001,CLIENT-001,Test Target 1,Garments,Muneer,ZARA,2026-08-18,open,approved,Test case one notes
+IMP-TEST-002,,Test Target 2,Cosmetics,Sir Azeem Ur Rehman,TIR TIR,2026-08-19,close,pending_approval,Test case two notes
+IMP-TEST-003,,Test Target 3,Footwear,Fahad,LEVI'S,2026-08-20,close_1,rejected,Test case three notes
