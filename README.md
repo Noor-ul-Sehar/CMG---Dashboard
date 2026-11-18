@@ -136,4 +136,4 @@ Backups are written to `backups/` (gitignored) and never overwritten.
 - `src/lib/auth/` — sessions, passwords, audit logging
 - `src/lib/storage/` — private document storage (path-traversal safe)
 - `src/components/` — UI components
-- `src/lib/db/schema.sql` — idempotent schema
+- `src/lib/db/schema.sql` — idempotent schema# CMG---Dashboard
