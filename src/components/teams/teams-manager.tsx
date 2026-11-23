@@ -9,6 +9,7 @@ import { Field, Input, Textarea } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { AlertIcon } from "@/components/icons";
 import type { TeamRow } from "@/lib/services/org-service";
+import { apiFetch } from "@/lib/api/client";
 
 interface TeamFormState {
   name: string;
@@ -69,7 +70,7 @@ export function TeamsManager({
       isActive: form.isActive,
     };
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         isEdit && modal ? `/api/teams/${modal.team.id}` : "/api/teams",
         {
           method: isEdit ? "PATCH" : "POST",
@@ -94,7 +95,7 @@ export function TeamsManager({
 
   async function toggleActive(team: TeamRow) {
     try {
-      await fetch(`/api/teams/${team.id}`, {
+      await apiFetch(`/api/teams/${team.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

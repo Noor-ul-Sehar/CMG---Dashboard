@@ -8,6 +8,7 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input, Select } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { AlertIcon } from "@/components/icons";
+import { apiFetch } from "@/lib/api/client";
 import type { InvestigatorRow, TeamRow } from "@/lib/services/org-service";
 
 interface InvestigatorFormState {
@@ -86,7 +87,7 @@ export function InvestigatorsManager({
       isActive: form.isActive,
     };
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         isEdit && modal ? `/api/investigators/${modal.investigator.id}` : "/api/investigators",
         {
           method: isEdit ? "PATCH" : "POST",
@@ -111,7 +112,7 @@ export function InvestigatorsManager({
 
   async function toggleActive(investigator: InvestigatorRow) {
     try {
-      await fetch(`/api/investigators/${investigator.id}`, {
+      await apiFetch(`/api/investigators/${investigator.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -12,6 +12,7 @@ import { USER_ROLES } from "@/lib/constants";
 import { formatDate } from "@/lib/format";
 import type { PublicUser } from "@/lib/services/user-service";
 import type { Team } from "@/types";
+import { apiFetch } from "@/lib/api/client";
 
 interface UserFormState {
   name: string;
@@ -95,7 +96,7 @@ export function UsersManager({
       ...(isEdit ? {} : { password: form.password }),
     };
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         isEdit && modal ? `/api/users/${modal.user.id}` : "/api/users",
         {
           method: isEdit ? "PATCH" : "POST",
@@ -122,7 +123,7 @@ export function UsersManager({
     setBusy(true);
     setServerError(null);
     try {
-      const res = await fetch(`/api/users/${user.id}`, {
+      const res = await apiFetch(`/api/users/${user.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -152,7 +153,7 @@ export function UsersManager({
     setServerError(null);
     setErrors({});
     try {
-      const res = await fetch(`/api/users/${resetModal.id}/password`, {
+      const res = await apiFetch(`/api/users/${resetModal.id}/password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: resetPassword }),

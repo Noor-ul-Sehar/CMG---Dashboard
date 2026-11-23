@@ -13,6 +13,7 @@ import type {
   ImportRowResult,
   ImportValidationSummary,
 } from "@/types";
+import { apiFetch } from "@/lib/api/client";
 
 interface UploadResult {
   token: string;
@@ -130,7 +131,7 @@ export function ImportWizard() {
     try {
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch("/api/import/upload", { method: "POST", body: form });
+      const res = await apiFetch("/api/import/upload", { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "Unable to upload the file.");
@@ -152,7 +153,7 @@ export function ImportWizard() {
       }
 
       // Validate behind the scenes so the preview can show readiness.
-      const vres = await fetch("/api/import/validate", {
+      const vres = await apiFetch("/api/import/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: u.token, mapping }),
@@ -174,7 +175,7 @@ export function ImportWizard() {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/import/confirm", {
+      const res = await apiFetch("/api/import/confirm", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: upload.token }),

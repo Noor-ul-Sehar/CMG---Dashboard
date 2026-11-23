@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/form";
 import { EmptyState, ErrorState } from "@/components/ui/states";
 import { Modal } from "@/components/ui/modal";
+import { apiFetch } from "@/lib/api/client";
+import { apiUrl } from "@/lib/api/client-url";
 
 type FilterState = {
   q: string;
@@ -130,7 +132,7 @@ export function ReportsDashboard({
     setError(null);
     try {
       const params = buildQuery(type, filters);
-      const res = await fetch(`/api/reports?${params.toString()}`, {
+      const res = await apiFetch(`/api/reports?${params.toString()}`, {
         cache: "no-store",
       });
       if (!res.ok) {
@@ -189,13 +191,13 @@ export function ReportsDashboard({
           {canExport && result ? (
             <>
               <a
-                href={`/api/reports/export?format=xlsx&${exportQuery.toString()}`}
+                href={apiUrl(`/api/reports/export?format=xlsx&${exportQuery.toString()}`)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-900 px-3.5 py-2 text-sm font-medium text-white shadow-sm shadow-zinc-900/10 transition-colors hover:bg-zinc-800"
               >
                 Export Excel (.xlsx)
               </a>
               <a
-                href={`/api/reports/export?format=csv&${exportQuery.toString()}`}
+                href={apiUrl(`/api/reports/export?format=csv&${exportQuery.toString()}`)}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-3.5 py-2 text-sm font-medium text-zinc-700 shadow-sm shadow-zinc-900/[0.03] transition-colors hover:border-zinc-400 hover:bg-zinc-50"
               >
                 Export CSV (.csv)

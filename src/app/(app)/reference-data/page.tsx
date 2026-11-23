@@ -7,6 +7,7 @@ import {
 import { MasterListManager } from "@/components/reference/master-list-manager";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/states";
+import { apiUrl } from "@/lib/api/client-url";
 
 export const dynamic = "force-dynamic";
 
@@ -17,35 +18,35 @@ const LIST_META: Record<
   target_by: {
     title: "Target By",
     description: "Who each case is targeted by. Kept separate from investigators.",
-    endpoint: "/api/master/target_by",
+    endpoint: apiUrl("/api/master/target_by"),
     singular: "Entry",
     emptyText: "No Target By entries yet.",
   },
   targets: {
     title: "Targets",
     description: "Named targets used on cases.",
-    endpoint: "/api/master/targets",
+    endpoint: apiUrl("/api/master/targets"),
     singular: "Target",
     emptyText: "No targets yet. Targets are referenced by cases.",
   },
   target_natures: {
     title: "Target Natures",
     description: "What each target deals in (e.g. Garments, Electronics).",
-    endpoint: "/api/master/target_natures",
+    endpoint: apiUrl("/api/master/target_natures"),
     singular: "Nature",
     emptyText: "No target natures yet.",
   },
   brands: {
     title: "Brands",
     description: "Brands maintained separately from targets. A case can have multiple brands.",
-    endpoint: "/api/master/brands",
+    endpoint: apiUrl("/api/master/brands"),
     singular: "Brand",
     emptyText: "No brands yet. Add brands to select them on cases.",
   },
   clients: {
     title: "Clients",
     description: "Client companies referenced by cases.",
-    endpoint: "/api/master/clients",
+    endpoint: apiUrl("/api/master/clients"),
     singular: "Client",
     emptyText: "No clients yet.",
   },

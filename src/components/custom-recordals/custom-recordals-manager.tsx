@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/modal";
 import { EmptyState, LoadingState, ErrorState } from "@/components/ui/states";
 import { AlertIcon, PlusIcon, TrashIcon } from "@/components/icons";
 import type { CustomRecordal } from "@/types";
+import { apiFetch } from "@/lib/api/client";
 
 interface FormState {
   recordalDate: string;
@@ -41,7 +42,7 @@ export function CustomRecordalsManager({
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/custom-recordals", {
+      const res = await apiFetch("/api/custom-recordals", {
         cache: "no-store",
       });
       const data = await res.json();
@@ -106,7 +107,7 @@ export function CustomRecordalsManager({
       brand: form.brand,
     };
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         isEdit && modal ? `/api/custom-recordals/${modal.recordal.id}` : "/api/custom-recordals",
         {
           method: isEdit ? "PATCH" : "POST",
@@ -133,7 +134,7 @@ export function CustomRecordalsManager({
     if (!deleteTarget) return;
     setDeleteBusy(true);
     try {
-      const res = await fetch(`/api/custom-recordals/${deleteTarget.id}`, {
+      const res = await apiFetch(`/api/custom-recordals/${deleteTarget.id}`, {
         method: "DELETE",
       });
       if (!res.ok) {

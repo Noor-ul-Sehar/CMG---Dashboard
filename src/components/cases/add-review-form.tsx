@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { REVIEW_FORM_OPTIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Textarea, Select } from "@/components/ui/form";
+import { apiFetch } from "@/lib/api/client";
 
 export function AddReviewForm({ caseId }: { caseId: number }) {
   const router = useRouter();
@@ -20,7 +21,7 @@ export function AddReviewForm({ caseId }: { caseId: number }) {
     setErrors({});
     setError(null);
     try {
-      const res = await fetch(`/api/cases/${caseId}/reviews`, {
+      const res = await apiFetch(`/api/cases/${caseId}/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reviewStatus: status, reviewComment: comment }),

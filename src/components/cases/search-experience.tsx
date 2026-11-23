@@ -22,6 +22,7 @@ import { EmptyState, ErrorState, LoadingState } from "@/components/ui/states";
 import { CaseFormModal } from "@/components/cases/case-form-modal";
 import { APPROVAL_STATUSES, CASE_STATUSES } from "@/lib/constants";
 import { formatDate } from "@/lib/format";
+import { apiFetch } from "@/lib/api/client";
 import {
   filtersToSearchParams,
   parseCaseSearchParams,
@@ -235,7 +236,7 @@ export function SearchExperience({
     setError(null);
     const timer = window.setTimeout(async () => {
       try {
-        const response = await fetch(
+        const response = await apiFetch(
           `/api/search?${filtersToSearchParams(filters).toString()}`,
           { signal: controller.signal }
         );

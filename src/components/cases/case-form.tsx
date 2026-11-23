@@ -13,6 +13,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { AlertIcon } from "@/components/icons";
 import type { CaseWithRefs, RecordalInput } from "@/types";
+import { apiFetch } from "@/lib/api/client";
 
 interface ExistingCaseInfo {
   id: number;
@@ -265,7 +266,7 @@ export function CaseForm({
       const controller = new AbortController();
       abortRef.current = controller;
       setChecking(true);
-      fetch(`/api/cases/check-reference?ref=${encodeURIComponent(normalized)}`, {
+      apiFetch(`/api/cases/check-reference?ref=${encodeURIComponent(normalized)}`, {
         signal: controller.signal,
       })
         .then((res) => res.json())
@@ -368,7 +369,7 @@ export function CaseForm({
 
     setSubmitting(true);
     try {
-      const res = await fetch(mode === "edit" ? `/api/cases/${caseData?.id}` : "/api/cases", {
+      const res = await apiFetch(mode === "edit" ? `/api/cases/${caseData?.id}` : "/api/cases", {
         method: mode === "edit" ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

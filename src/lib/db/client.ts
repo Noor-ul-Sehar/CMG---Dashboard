@@ -2,11 +2,17 @@ import { Pool } from "pg";
 
 const globalForDb = globalThis as unknown as { cmgPool?: Pool };
 
+const sslEnabled = ["true", "1", "require"].includes(
+  (process.env.DATABASE_SSL ?? "").toLowerCase()
+);
+
 export const db =
   globalForDb.cmgPool ??
   new Pool({
     connectionString: process.env.DATABASE_URL,
     max: 10,
+    ssl: sslEnabled ? { rejectUnauthorized: false } : undefined,
+    connectionTimeoutMillis: 10000,
   });
 
 if (process.env.NODE_ENV !== "production") globalForDb.cmgPool = db;

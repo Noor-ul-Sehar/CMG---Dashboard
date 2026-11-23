@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { REMARK_TYPES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Textarea, Select } from "@/components/ui/form";
+import { apiFetch } from "@/lib/api/client";
 
 export function AddRemarkForm({ caseId }: { caseId: number }) {
   const router = useRouter();
@@ -22,7 +23,7 @@ export function AddRemarkForm({ caseId }: { caseId: number }) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/cases/${caseId}/remarks`, {
+      const res = await apiFetch(`/api/cases/${caseId}/remarks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ comment, type }),

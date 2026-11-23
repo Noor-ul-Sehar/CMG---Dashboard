@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
 import { AlertIcon } from "@/components/icons";
+import { apiFetch } from "@/lib/api/client";
 
 export function LoginForm() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export function LoginForm() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await apiFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

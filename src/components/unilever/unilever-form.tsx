@@ -13,6 +13,7 @@ import { Card, CardBody } from "@/components/ui/card";
 import { Field, Input, Select, Textarea } from "@/components/ui/form";
 import { AlertIcon } from "@/components/icons";
 import type { UnileverCase } from "@/types";
+import { apiFetch } from "@/lib/api/client";
 
 interface ExistingCaseInfo {
   id: number;
@@ -110,7 +111,7 @@ export function UnileverForm({ mode, caseData, brands, onSuccess, onCancel }: Pr
       const controller = new AbortController();
       abortRef.current = controller;
       setChecking(true);
-      fetch(`/api/unilever/check-reference?ref=${encodeURIComponent(normalized)}`, {
+      apiFetch(`/api/unilever/check-reference?ref=${encodeURIComponent(normalized)}`, {
         signal: controller.signal,
       })
         .then((res) => res.json())
@@ -184,7 +185,7 @@ export function UnileverForm({ mode, caseData, brands, onSuccess, onCancel }: Pr
 
     setSubmitting(true);
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         mode === "edit" ? `/api/unilever/${caseData?.id}` : "/api/unilever",
         {
           method: mode === "edit" ? "PATCH" : "POST",

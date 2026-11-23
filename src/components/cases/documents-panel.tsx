@@ -7,6 +7,8 @@ import { Input, Field } from "@/components/ui/form";
 import { DownloadIcon, TrashIcon, UploadIcon } from "@/components/icons";
 import { formatBytes, formatDateTime } from "@/lib/format";
 import type { CaseDocument } from "@/types";
+import { apiFetch } from "@/lib/api/client";
+import { apiUrl } from "@/lib/api/client-url";
 
 export function DocumentsPanel({
   caseId,
@@ -40,7 +42,7 @@ export function DocumentsPanel({
       const body = new FormData();
       body.append("file", file);
       body.append("description", description);
-      const res = await fetch(`/api/cases/${caseId}/documents`, {
+      const res = await apiFetch(`/api/cases/${caseId}/documents`, {
         method: "POST",
         body,
       });
@@ -64,7 +66,7 @@ export function DocumentsPanel({
   async function remove(doc: CaseDocument) {
     if (!window.confirm(`Delete "${doc.name}"? This cannot be undone.`)) return;
     try {
-      const res = await fetch(`/api/cases/${caseId}/documents/${doc.id}`, {
+      const res = await apiFetch(`/api/cases/${caseId}/documents/${doc.id}`, {
         method: "DELETE",
       });
       if (!res.ok) {
@@ -136,7 +138,7 @@ export function DocumentsPanel({
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <a
-                  href={`/api/cases/${caseId}/documents/${d.id}`}
+                  href={apiUrl(`/api/cases/${caseId}/documents/${d.id}`)}
                   className="inline-flex items-center text-sm font-medium text-zinc-600 hover:text-zinc-900"
                   title="Download document"
                 >

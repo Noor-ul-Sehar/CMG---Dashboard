@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "@/components/icons";
+import { apiFetch } from "@/lib/api/client";
 
 export function UnileverDeleteButton({ caseId }: { caseId: number }) {
   const router = useRouter();
@@ -15,7 +16,7 @@ export function UnileverDeleteButton({ caseId }: { caseId: number }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`/api/unilever/${caseId}`, { method: "DELETE" });
+      const res = await apiFetch(`/api/unilever/${caseId}`, { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         setError(data.error ?? "Unable to delete the case.");

@@ -32,10 +32,13 @@ Copy `.env.example` to `.env.local` and fill in the values:
 
 | Variable | Purpose |
 |----------|---------|
-| `DATABASE_URL` | PostgreSQL connection string |
+| `DATABASE_URL` | PostgreSQL connection string; use the hosted DB URL on Vercel |
+| `DATABASE_SSL` | Set `true` for hosted Postgres that requires TLS |
 | `AUTH_SECRET` | JWT/session signing secret — generate with `openssl rand -base64 48` |
 | `DEV_ADMIN_PASSWORD` | (optional) bootstrap password applied by the dev script |
 | `UPLOAD_DIR` | (optional) private documents directory; defaults to `./uploads` |
+| `NEXT_PUBLIC_APP_URL` | Public app origin, e.g. `https://cmg-dashboard-delta.vercel.app` |
+| `NEXT_PUBLIC_API_BASE_URL` | (optional) API origin; leave blank to use same-origin `/api` routes |
 
 Secrets live only in `.env.local`, which is gitignored.
 

@@ -6,6 +6,7 @@ import { PAGE_TITLES } from "@/lib/navigation";
 import { USER_ROLES } from "@/lib/constants";
 import { MenuIcon, SearchIcon } from "@/components/icons";
 import type { SessionUser } from "@/lib/auth";
+import { apiFetch } from "@/lib/api/client";
 
 function initials(name: string): string {
   return name
@@ -44,7 +45,7 @@ export function Header({
   }
 
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+    await apiFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
     router.push("/login");
     router.refresh();
   }

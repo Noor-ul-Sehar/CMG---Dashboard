@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/form";
 import { AlertIcon } from "@/components/icons";
+import { apiFetch } from "@/lib/api/client";
 
 export function ChangePasswordForm({ force = false }: { force?: boolean }) {
   const router = useRouter();
@@ -25,7 +26,7 @@ export function ChangePasswordForm({ force = false }: { force?: boolean }) {
     setErrors({});
     setError(null);
     try {
-      const res = await fetch("/api/auth/change-password", {
+      const res = await apiFetch("/api/auth/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPassword, newPassword }),
