@@ -29,10 +29,10 @@ export interface NavSection {
 }
 
 const marketCase: NavItem = {
-  href: "/cases",
+  href: "/market-cases/all-cases",
   label: "All Cases",
   icon: FolderIcon,
-  match: (p) => p === "/cases",
+  match: (p) => p === "/market-cases/all-cases",
 };
 
 export const NAV_SECTIONS: NavSection[] = [
@@ -40,10 +40,10 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Overview",
     items: [
       {
-        href: "/dashboard",
+        href: "/overview/dashboard",
         label: "Dashboard",
         icon: DashboardIcon,
-        match: (p) => p === "/dashboard",
+        match: (p) => p === "/overview/dashboard",
       },
     ],
   },
@@ -52,40 +52,40 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       marketCase,
       {
-        href: "/cases/open",
+        href: "/market-cases/open-cases",
         label: "Open Cases",
         icon: FolderOpenIcon,
-        match: (p) => p === "/cases/open",
+        match: (p) => p === "/market-cases/open-cases",
       },
       {
-        href: "/cases/closed",
+        href: "/market-cases/closed-cases",
         label: "Closed Cases",
         icon: FolderCheckIcon,
-        match: (p) => p === "/cases/closed",
+        match: (p) => p === "/market-cases/closed-cases",
       },
       {
-        href: "/cases/close-1",
+        href: "/market-cases/close-1-cases",
         label: "Close 1 Cases",
         icon: FolderCheckIcon,
-        match: (p) => p === "/cases/close-1",
+        match: (p) => p === "/market-cases/close-1-cases",
       },
       {
-        href: "/search",
+        href: "/market-cases/search-cases",
         label: "Search Cases",
         icon: SearchIcon,
-        match: (p) => p === "/search",
+        match: (p) => p === "/market-cases/search-cases",
       },
       {
-        href: "/import",
+        href: "/market-cases/import-data",
         label: "Import Data",
         icon: UploadIcon,
-        match: (p) => p === "/import",
+        match: (p) => p === "/market-cases/import-data",
       },
       {
-        href: "/reports",
+        href: "/market-cases/reporting-export",
         label: "Reporting & Export",
         icon: FileTextIcon,
-        match: (p) => p === "/reports",
+        match: (p) => p === "/market-cases/reporting-export",
       },
     ],
   },
@@ -93,10 +93,10 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Unilever Cases",
     items: [
       {
-        href: "/unilever",
+        href: "/unilever/cases",
         label: "Unilever Cases",
         icon: PackageIcon,
-        match: (p) => p === "/unilever",
+        match: (p) => p === "/unilever/cases",
       },
     ],
   },
@@ -104,10 +104,10 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Custom Recordals",
     items: [
       {
-        href: "/custom-recordals",
+        href: "/custom-recordals/records",
         label: "Custom Recordals",
         icon: LayersIcon,
-        match: (p) => p === "/custom-recordals",
+        match: (p) => p === "/custom-recordals/records",
       },
     ],
   },
@@ -115,10 +115,10 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Reference",
     items: [
       {
-        href: "/cmg-references",
+        href: "/reference/cmg-reference-numbers",
         label: "CMG Reference Numbers",
         icon: HashIcon,
-        match: (p) => p === "/cmg-references",
+        match: (p) => p === "/reference/cmg-reference-numbers",
       },
     ],
   },
@@ -126,46 +126,46 @@ export const NAV_SECTIONS: NavSection[] = [
     title: "Admin",
     items: [
       {
-        href: "/teams",
+        href: "/admin/teams",
         label: "Teams",
         icon: UsersIcon,
-        match: (p) => p === "/teams",
+        match: (p) => p === "/admin/teams",
       },
       {
-        href: "/investigators",
+        href: "/admin/investigators",
         label: "Investigators",
         icon: UserIcon,
-        match: (p) => p === "/investigators",
+        match: (p) => p === "/admin/investigators",
       },
       {
-        href: "/users",
+        href: "/admin/users",
         label: "Users",
         icon: UsersIcon,
-        match: (p) => p === "/users",
+        match: (p) => p === "/admin/users",
       },
       {
-        href: "/reference-data",
+        href: "/admin/master-data",
         label: "Master Data",
         icon: InboxIcon,
-        match: (p) => p === "/reference-data",
+        match: (p) => p === "/admin/master-data",
       },
       {
-        href: "/settings",
+        href: "/admin/settings",
         label: "Settings",
         icon: SettingsIcon,
-        match: (p) => p === "/settings",
+        match: (p) => p === "/admin/settings",
       },
     ],
   },
 ];
 
 export const PAGE_TITLES: Record<string, { title: string; description: string }> = {
-  "/dashboard": { title: "Dashboard", description: "Overview of all CMG cases" },
-  "/cases": { title: "All Cases", description: "Every case in the central database" },
-  "/cases/open": { title: "Open Cases", description: "Cases currently being worked on" },
-  "/cases/closed": { title: "Closed Cases", description: "Cases that have been closed" },
-  "/cases/close-1": { title: "Close 1 Cases", description: "Cases with a Close 1 status" },
-  "/unilever": {
+  "/overview/dashboard": { title: "Dashboard", description: "Overview of all CMG cases" },
+  "/market-cases/all-cases": { title: "All Cases", description: "Every case in the central database" },
+  "/market-cases/open-cases": { title: "Open Cases", description: "Cases currently being worked on" },
+  "/market-cases/closed-cases": { title: "Closed Cases", description: "Cases that have been closed" },
+  "/market-cases/close-1-cases": { title: "Close 1 Cases", description: "Cases with a Close 1 status" },
+  "/unilever/cases": {
     title: "Unilever Cases",
     description: "Independent Unilever case-management module",
   },
@@ -173,16 +173,16 @@ export const PAGE_TITLES: Record<string, { title: string; description: string }>
     title: "New Unilever Case",
     description: "Create a new case in the Unilever module",
   },
-  "/search": { title: "Search Cases", description: "Find cases across the central database" },
-  "/import": { title: "Import Data", description: "Import case data from Excel or CSV" },
-  "/reports": { title: "Reporting & Export", description: "Build, preview and export case reports" },
-  "/custom-recordals": {
+  "/market-cases/search-cases": { title: "Search Cases", description: "Find cases across the central database" },
+  "/market-cases/import-data": { title: "Import Data", description: "Import case data from Excel or CSV" },
+  "/market-cases/reporting-export": { title: "Reporting & Export", description: "Build, preview and export case reports" },
+  "/custom-recordals/records": {
     title: "Custom Recordals",
     description: "Independent recordal records — client ref #, CMG ref #, brand",
   },
-  "/cmg-references": { title: "CMG Reference Numbers", description: "Reference numbers in use" },
-  "/teams": { title: "Teams", description: "Organizational reference data" },
-  "/investigators": { title: "Investigators", description: "Organizational reference data" },
-  "/reference-data": { title: "Master Data", description: "Reference lists for cases" },
-  "/settings": { title: "Settings", description: "System configuration and preferences" },
+  "/reference/cmg-reference-numbers": { title: "CMG Reference Numbers", description: "Reference numbers in use" },
+  "/admin/teams": { title: "Teams", description: "Organizational reference data" },
+  "/admin/investigators": { title: "Investigators", description: "Organizational reference data" },
+  "/admin/master-data": { title: "Master Data", description: "Reference lists for cases" },
+  "/admin/settings": { title: "Settings", description: "System configuration and preferences" },
 };

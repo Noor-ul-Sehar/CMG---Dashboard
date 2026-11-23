@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/states";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { ImportWizard } from "@/components/import/import-wizard";
 import type { ImportBatch } from "@/types";
 
@@ -19,10 +20,68 @@ const STATUS_BADGES: Record<string, string> = {
   failed: "bg-red-50 text-red-700 ring-red-600/20",
 };
 
+const historyColumns: Column<ImportBatch>[] = [
+  {
+    key: "file",
+    header: "File",
+    cell: (b) => (
+      <span className="block max-w-56 truncate font-medium text-zinc-900" title={b.filename}>
+        {b.filename}
+      </span>
+    ),
+  },
+  {
+    key: "rows",
+    header: "Rows",
+    cell: (b) => <span className="tabular-nums text-zinc-700">{b.totalRows}</span>,
+  },
+  {
+    key: "new",
+    header: "New",
+    cell: (b) => <span className="tabular-nums text-emerald-700">{b.newCount}</span>,
+  },
+  {
+    key: "duplicates",
+    header: "Duplicates",
+    cell: (b) => <span className="tabular-nums text-amber-700">{b.duplicateCount}</span>,
+  },
+  {
+    key: "invalid",
+    header: "Invalid",
+    cell: (b) => <span className="tabular-nums text-red-700">{b.invalidCount}</span>,
+  },
+  {
+    key: "status",
+    header: "Status",
+    cell: (b) => (
+      <Badge className={STATUS_BADGES[b.status] ?? "bg-zinc-100 text-zinc-600 ring-zinc-500/20"}>
+        {b.status}
+      </Badge>
+    ),
+  },
+  {
+    key: "date",
+    header: "Date",
+    cell: (b) => <span className="tabular-nums text-zinc-500">{formatDateTime(b.createdAt)}</span>,
+  },
+  {
+    key: "report",
+    header: "Report",
+    cell: (b) => (
+      <a
+        href={`/market-cases/import-data/batches/${b.id}`}
+        className="text-sm font-medium text-zinc-900 underline-offset-2 hover:underline"
+      >
+        View report
+      </a>
+    ),
+  },
+];
+
 export default async function ImportPage() {
   const user = await getSessionUser();
   if (!user || !can(user, "import")) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
   let history: ImportBatch[] = [];
   try {
@@ -60,49 +119,11 @@ export default async function ImportPage() {
             description="Completed imports will appear here with their full error reports."
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">File</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Rows</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">New</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Duplicates</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Invalid</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Date</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Report</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((b) => (
-                  <tr key={b.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                    <td className="max-w-56 truncate px-4 py-3 font-medium text-zinc-900">{b.filename}</td>
-                    <td className="px-4 py-3 tabular-nums text-zinc-700">{b.totalRows}</td>
-                    <td className="px-4 py-3 tabular-nums text-emerald-700">{b.newCount}</td>
-                    <td className="px-4 py-3 tabular-nums text-amber-700">{b.duplicateCount}</td>
-                    <td className="px-4 py-3 tabular-nums text-red-700">{b.invalidCount}</td>
-                    <td className="px-4 py-3">
-                      <Badge className={STATUS_BADGES[b.status] ?? "bg-zinc-100 text-zinc-600 ring-zinc-500/20"}>
-                        {b.status}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 tabular-nums text-zinc-500">
-                      {formatDateTime(b.createdAt)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <a
-                        href={`/import/batches/${b.id}`}
-                        className="text-sm font-medium text-zinc-900 underline-offset-2 hover:underline"
-                      >
-                        View report
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable
+            columns={historyColumns}
+            rows={history}
+            rowKey={(b) => b.id}
+          />
         )}
       </Card>
     </div>

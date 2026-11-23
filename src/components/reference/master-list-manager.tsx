@@ -5,9 +5,10 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
-import { AlertIcon, SearchIcon } from "@/components/icons";
+import { AlertIcon } from "@/components/icons";
 import type { MasterRow } from "@/lib/services/master-service";
 
 export function MasterListManager({
@@ -31,6 +32,8 @@ export function MasterListManager({
 }) {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const [modal, setModal] = useState<{ mode: "create" } | { mode: "edit"; row: MasterRow } | null>(null);
   const [form, setForm] = useState<{ name: string; isActive: boolean }>({ name: "", isActive: true });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -98,6 +101,70 @@ export function MasterListManager({
     }
   }
 
+  function openFilters() {
+    setDraftQ(q);
+    setFiltersOpen(true);
+  }
+
+  function applyFilters() {
+    setQ(draftQ);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftQ("");
+    setQ("");
+    setFiltersOpen(false);
+  }
+
+  const columns: Column<MasterRow>[] = [
+    {
+      key: "name",
+      header: "Name",
+      cell: (r) => <span className="font-medium text-zinc-900">{r.name}</span>,
+    },
+    {
+      key: "cases",
+      header: "Cases",
+      cell: (r) => <span className="tabular-nums text-zinc-600">{r.caseCount}</span>,
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (r) =>
+        r.isActive ? (
+          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
+        ) : (
+          <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
+        ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (r) =>
+        canManage ? (
+          <div className="relative z-10 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => openEdit(r)}
+              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleActive(r)}
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
+            >
+              {r.isActive ? "Deactivate" : "Activate"}
+            </button>
+          </div>
+        ) : (
+          <span className="text-xs text-zinc-400">View only</span>
+        ),
+    },
+  ];
+
   return (
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-3 border-b border-zinc-100 px-5 py-4">
@@ -105,9 +172,20 @@ export function MasterListManager({
           <h2 className="text-base font-semibold text-zinc-900">{title}</h2>
           <p className="mt-0.5 text-xs text-zinc-500">{description}</p>
         </div>
-        <Button type="button" size="sm" onClick={openCreate} disabled={!canManage}>
-          New {singular}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={openFilters}
+            aria-haspopup="dialog"
+          >
+            Filters{q ? " (1)" : ""}
+          </Button>
+          <Button type="button" size="sm" onClick={openCreate} disabled={!canManage}>
+            New {singular}
+          </Button>
+        </div>
       </div>
 
       <div className="space-y-4 p-5">
@@ -118,80 +196,51 @@ export function MasterListManager({
           </div>
         ) : null}
 
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={`Search ${title.toLowerCase()}…`}
-            className="w-full pl-9 sm:w-72"
-            aria-label={`Search ${title}`}
-          />
-        </div>
-
-        {filtered.length === 0 ? (
-          <p className="py-8 text-center text-sm text-zinc-500">
-            {rows.length === 0 ? emptyText : "No records match your search."}
-          </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Name</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Cases</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                    <td className="px-4 py-3 font-medium text-zinc-900">{r.name}</td>
-                    <td className="px-4 py-3 tabular-nums text-zinc-600">{r.caseCount}</td>
-                    <td className="px-4 py-3">
-                      {r.isActive ? (
-                        <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
-                      ) : (
-                        <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {canManage ? (
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(r)}
-                            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => toggleActive(r)}
-                            className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
-                          >
-                            {r.isActive ? "Deactivate" : "Activate"}
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-xs text-zinc-400">View only</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <DataTable
+          columns={columns}
+          rows={filtered}
+          rowKey={(r) => r.id}
+          empty={rows.length === 0 ? emptyText : "No records match your search."}
+        />
 
         {manageHint ? <p className="text-xs text-zinc-500">{manageHint}</p> : null}
       </div>
 
       <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title={`Filter ${title.toLowerCase()}`}
+        description="Leave blank to show all records. Apply to update the list."
+        size="lg"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={clearFilters}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <Field label="Search" hint="Matches record name.">
+          <Input
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder={`Search ${title.toLowerCase()}…`}
+            aria-label={`Search ${title}`}
+          />
+        </Field>
+      </Modal>
+
+      <Modal
         open={modal !== null}
         onClose={() => setModal(null)}
         title={modal?.mode === "edit" ? `Edit ${modal.row.name}` : `New ${singular}`}
+        size="lg"
         description={description}
         footer={
           <>

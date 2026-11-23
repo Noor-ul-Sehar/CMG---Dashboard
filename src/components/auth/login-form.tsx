@@ -32,7 +32,7 @@ export function LoginForm() {
       }
       const redirectTo = data.user?.mustChangePassword
         ? "/change-password"
-        : searchParams.get("redirect") || "/dashboard";
+        : searchParams.get("redirect") || "/overview/dashboard";
       router.push(redirectTo);
       router.refresh();
     } catch {

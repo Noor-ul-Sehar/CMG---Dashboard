@@ -21,7 +21,7 @@ export function UnileverDeleteButton({ caseId }: { caseId: number }) {
         setError(data.error ?? "Unable to delete the case.");
         return;
       }
-      router.push("/unilever");
+      router.push("/unilever/cases");
       router.refresh();
     } catch {
       setError("Unable to reach the server. Please try again.");

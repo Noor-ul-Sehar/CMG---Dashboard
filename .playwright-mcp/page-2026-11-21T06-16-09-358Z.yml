@@ -1,0 +1,108 @@
+- generic [active] [ref=f71e1]:
+  - generic [ref=f71e2]:
+    - complementary [ref=f71e3]:
+      - link [ref=f71e5] [cursor=pointer]:
+        - /url: /dashboard
+        - generic [ref=f71e6]: CMG
+        - generic [ref=f71e8]:
+          - paragraph [ref=f71e9]: CMG Dashboard
+          - paragraph [ref=f71e10]: Case Management
+      - navigation [ref=f71e11]:
+        - generic [ref=f71e12]:
+          - paragraph [ref=f71e13]: Overview
+          - link "Dashboard" [ref=f71e15] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=f71e22]:
+          - paragraph [ref=f71e23]: Market Cases
+          - generic [ref=f71e24]:
+            - link "All Cases" [ref=f71e25] [cursor=pointer]:
+              - /url: /cases
+            - link "Open Cases" [ref=f71e29] [cursor=pointer]:
+              - /url: /cases/open
+            - link "Closed Cases" [ref=f71e34] [cursor=pointer]:
+              - /url: /cases/closed
+            - link "Close 1 Cases" [ref=f71e39] [cursor=pointer]:
+              - /url: /cases/close-1
+            - link "Search Cases" [ref=f71e44] [cursor=pointer]:
+              - /url: /search
+            - link "Import Data" [ref=f71e49] [cursor=pointer]:
+              - /url: /import
+            - link "Reporting & Export" [ref=f71e54] [cursor=pointer]:
+              - /url: /reports
+        - generic [ref=f71e61]:
+          - paragraph [ref=f71e62]: Unilever Cases
+          - link "Unilever Cases" [ref=f71e64] [cursor=pointer]:
+            - /url: /unilever
+        - generic [ref=f71e69]:
+          - paragraph [ref=f71e70]: Custom Recordals
+          - link "Custom Recordals" [ref=f71e72] [cursor=pointer]:
+            - /url: /custom-recordals
+        - generic [ref=f71e78]:
+          - paragraph [ref=f71e79]: Reference
+          - link "CMG Reference Numbers" [ref=f71e81] [cursor=pointer]:
+            - /url: /cmg-references
+        - generic [ref=f71e85]:
+          - paragraph [ref=f71e86]: Admin
+          - generic [ref=f71e87]:
+            - link "Teams" [ref=f71e88] [cursor=pointer]:
+              - /url: /teams
+            - link "Investigators" [ref=f71e95] [cursor=pointer]:
+              - /url: /investigators
+            - link "Users" [ref=f71e100] [cursor=pointer]:
+              - /url: /users
+            - link "Master Data" [ref=f71e107] [cursor=pointer]:
+              - /url: /reference-data
+            - link "Settings" [ref=f71e112] [cursor=pointer]:
+              - /url: /settings
+      - generic [ref=f71e117]:
+        - generic [ref=f71e118]:
+          - generic [ref=f71e119]: AC
+          - generic [ref=f71e120]:
+            - paragraph [ref=f71e121]: Alex Carter
+            - paragraph [ref=f71e122]: admin@cmg.internal
+        - paragraph [ref=f71e123]: CMG Case Management System
+    - generic [ref=f71e124]:
+      - banner [ref=f71e125]:
+        - generic [ref=f71e126]:
+          - heading "Reporting & Export" [level=1] [ref=f71e127]
+          - paragraph [ref=f71e128]: Build, preview and export case reports
+        - search [ref=f71e129]:
+          - searchbox "Search cases" [ref=f71e130]
+        - button "Alex Carter Admin AC" [ref=f71e132]:
+          - generic [ref=f71e133]:
+            - generic [ref=f71e134]: Alex Carter
+            - generic [ref=f71e135]: Admin
+          - generic [ref=f71e136]: AC
+      - main [ref=f71e137]:
+        - generic [ref=f71e139]:
+          - generic [ref=f71e141]:
+            - heading "Reporting & Export" [level=1] [ref=f71e142]
+            - paragraph [ref=f71e143]: Build, preview and export reports from Market Cases.
+          - generic [ref=f71e144]:
+            - generic [ref=f71e145]:
+              - generic [ref=f71e147]:
+                - heading "Report type" [level=3] [ref=f71e148]
+                - paragraph [ref=f71e149]: Choose what you want to see, then run the report.
+              - generic [ref=f71e150]:
+                - button "All Cases" [ref=f71e151]
+                - button "Open Cases" [ref=f71e152]
+                - button "Closed Cases" [ref=f71e153]
+                - button "Close 1 Cases" [ref=f71e154]
+                - button "Cases by Brand" [ref=f71e155]
+                - button "Custom filtered case report" [ref=f71e156]
+            - generic [ref=f71e157]:
+              - generic [ref=f71e159]:
+                - heading "Filters" [level=3] [ref=f71e160]
+                - paragraph [ref=f71e161]: Narrow the report down, then run the report to apply changes.
+              - generic [ref=f71e162]:
+                - button "Filters" [ref=f71e163]
+                - button "Run Report" [ref=f71e164]
+            - generic [ref=f71e165]:
+              - generic [ref=f71e167]:
+                - heading "Report preview" [level=3] [ref=f71e168]
+                - paragraph [ref=f71e169]: Run a report to see results here.
+              - generic [ref=f71e170]:
+                - heading "No report yet" [level=3] [ref=f71e175]
+                - paragraph [ref=f71e176]: Pick a report type, adjust filters if needed, and press Run report.
+  - button "Open Next.js Dev Tools" [ref=f71e182] [cursor=pointer]
+  - alert [ref=f71e186]

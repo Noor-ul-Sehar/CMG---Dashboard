@@ -1,0 +1,280 @@
+- generic [active] [ref=f8e1]:
+  - generic [ref=f8e2]:
+    - complementary [ref=f8e3]:
+      - link [ref=f8e5] [cursor=pointer]:
+        - /url: /overview/dashboard
+        - generic [ref=f8e6]: CMG
+        - generic [ref=f8e8]:
+          - paragraph [ref=f8e9]: CMG Dashboard
+          - paragraph [ref=f8e10]: Case Management
+      - navigation [ref=f8e11]:
+        - generic [ref=f8e12]:
+          - paragraph [ref=f8e13]: Overview
+          - link "Dashboard" [ref=f8e15] [cursor=pointer]:
+            - /url: /overview/dashboard
+        - generic [ref=f8e22]:
+          - paragraph [ref=f8e23]: Market Cases
+          - generic [ref=f8e24]:
+            - link "All Cases" [ref=f8e25] [cursor=pointer]:
+              - /url: /market-cases/all-cases
+            - link "Open Cases" [ref=f8e30] [cursor=pointer]:
+              - /url: /market-cases/open-cases
+            - link "Closed Cases" [ref=f8e35] [cursor=pointer]:
+              - /url: /market-cases/closed-cases
+            - link "Close 1 Cases" [ref=f8e40] [cursor=pointer]:
+              - /url: /market-cases/close-1-cases
+            - link "Search Cases" [ref=f8e45] [cursor=pointer]:
+              - /url: /market-cases/search-cases
+            - link "Import Data" [ref=f8e50] [cursor=pointer]:
+              - /url: /market-cases/import-data
+            - link "Reporting & Export" [ref=f8e55] [cursor=pointer]:
+              - /url: /market-cases/reporting-export
+        - generic [ref=f8e61]:
+          - paragraph [ref=f8e62]: Unilever Cases
+          - link "Unilever Cases" [ref=f8e64] [cursor=pointer]:
+            - /url: /unilever/cases
+        - generic [ref=f8e69]:
+          - paragraph [ref=f8e70]: Custom Recordals
+          - link "Custom Recordals" [ref=f8e72] [cursor=pointer]:
+            - /url: /custom-recordals/records
+        - generic [ref=f8e78]:
+          - paragraph [ref=f8e79]: Reference
+          - link "CMG Reference Numbers" [ref=f8e81] [cursor=pointer]:
+            - /url: /reference/cmg-reference-numbers
+        - generic [ref=f8e85]:
+          - paragraph [ref=f8e86]: Admin
+          - generic [ref=f8e87]:
+            - link "Teams" [ref=f8e88] [cursor=pointer]:
+              - /url: /admin/teams
+            - link "Investigators" [ref=f8e95] [cursor=pointer]:
+              - /url: /admin/investigators
+            - link "Users" [ref=f8e100] [cursor=pointer]:
+              - /url: /admin/users
+            - link "Master Data" [ref=f8e107] [cursor=pointer]:
+              - /url: /admin/master-data
+            - link "Settings" [ref=f8e112] [cursor=pointer]:
+              - /url: /admin/settings
+      - generic [ref=f8e117]:
+        - generic [ref=f8e118]:
+          - generic [ref=f8e119]: AC
+          - generic [ref=f8e120]:
+            - paragraph [ref=f8e121]: Alex Carter
+            - paragraph [ref=f8e122]: admin@cmg.internal
+        - paragraph [ref=f8e123]: CMG Case Management System
+    - generic [ref=f8e124]:
+      - banner [ref=f8e125]:
+        - generic [ref=f8e126]:
+          - heading "All Cases" [level=1] [ref=f8e127]
+          - paragraph [ref=f8e128]: Every case in the central database
+        - search [ref=f8e129]:
+          - searchbox "Search cases" [ref=f8e130]
+        - button "Alex Carter Admin AC" [ref=f8e132]:
+          - generic [ref=f8e133]:
+            - generic [ref=f8e134]: Alex Carter
+            - generic [ref=f8e135]: Admin
+          - generic [ref=f8e136]: AC
+      - main [ref=f8e137]:
+        - generic [ref=f8e139]:
+          - generic [ref=f8e140]:
+            - generic [ref=f8e141]:
+              - heading "All Cases" [level=1] [ref=f8e142]
+              - paragraph [ref=f8e143]: Every case in the central database.
+            - button "New Market Case" [ref=f8e145]
+          - generic [ref=f8e147]:
+            - textbox "Search cases" [ref=f8e151]:
+              - /placeholder: Search refs, targets, brands, notes…
+            - combobox "Sort results" [ref=f8e152]:
+              - option "Most Relevant"
+              - option "Newest First" [selected]
+              - option "Oldest First"
+              - option "Title A–Z"
+              - option "Title Z–A"
+            - button "Filters" [ref=f8e153]
+          - paragraph [ref=f8e155]: 19 cases
+          - generic [ref=f8e158]:
+            - table [ref=f8e160]:
+              - rowgroup [ref=f8e161]:
+                - row [ref=f8e162]:
+                  - 'columnheader "CMG Reference #" [ref=f8e163]'
+                  - columnheader "Target" [ref=f8e164]
+                  - columnheader "Brand" [ref=f8e165]
+                  - columnheader "Target By" [ref=f8e166]
+                  - columnheader "Case Status" [ref=f8e167]
+                  - columnheader "Approval Status" [ref=f8e168]
+                  - columnheader "Investigation Date" [ref=f8e169]
+                  - columnheader "Actions" [ref=f8e170]
+              - rowgroup [ref=f8e171]:
+                - row [ref=f8e172] [cursor=pointer]:
+                  - cell [ref=f8e173]:
+                    - link "16 CASE(S)" [ref=f8e174]:
+                      - /url: /market-cases/all-cases/19
+                    - link "Open record" [ref=f8e175]:
+                      - /url: /market-cases/all-cases/19
+                  - cell [ref=f8e176]
+                  - cell [ref=f8e177]
+                  - cell [ref=f8e178]
+                  - cell "Open" [ref=f8e179]
+                  - cell "Pending Approval" [ref=f8e182]
+                  - cell "—" [ref=f8e185]
+                  - cell [ref=f8e186]:
+                    - generic [ref=f8e187]:
+                      - link "View" [ref=f8e188]:
+                        - /url: /market-cases/all-cases/19
+                      - button "Edit" [ref=f8e193]
+                - row [ref=f8e197] [cursor=pointer]:
+                  - cell [ref=f8e198]:
+                    - link "CMG-IMPORT-TEST-0002" [ref=f8e199]:
+                      - /url: /market-cases/all-cases/18
+                    - link "Open record" [ref=f8e200]:
+                      - /url: /market-cases/all-cases/18
+                  - cell "Test Target Two" [ref=f8e201]
+                  - cell "ZARA" [ref=f8e203]
+                  - cell [ref=f8e206]
+                  - cell "Open" [ref=f8e207]
+                  - cell "Pending Approval" [ref=f8e210]
+                  - cell "21 Nov 2026" [ref=f8e213]
+                  - cell [ref=f8e214]:
+                    - generic [ref=f8e215]:
+                      - link "View" [ref=f8e216]:
+                        - /url: /market-cases/all-cases/18
+                      - button "Edit" [ref=f8e221]
+                - row [ref=f8e225] [cursor=pointer]:
+                  - cell [ref=f8e226]:
+                    - link "CMG-IMPORT-TEST-0001" [ref=f8e227]:
+                      - /url: /market-cases/all-cases/17
+                    - link "Open record" [ref=f8e228]:
+                      - /url: /market-cases/all-cases/17
+                  - cell "Test Target One" [ref=f8e229]
+                  - cell "ZARA" [ref=f8e231]
+                  - cell [ref=f8e234]
+                  - cell "Open" [ref=f8e235]
+                  - cell "Pending Approval" [ref=f8e238]
+                  - cell "20 Nov 2026" [ref=f8e241]
+                  - cell [ref=f8e242]:
+                    - generic [ref=f8e243]:
+                      - link "View" [ref=f8e244]:
+                        - /url: /market-cases/all-cases/17
+                      - button "Edit" [ref=f8e249]
+                - row [ref=f8e253] [cursor=pointer]:
+                  - cell [ref=f8e254]:
+                    - link "CMG-2024-0013" [ref=f8e255]:
+                      - /url: /market-cases/all-cases/16
+                    - link "Open record" [ref=f8e256]:
+                      - /url: /market-cases/all-cases/16
+                  - cell "Grand Bazaar Stall 9" [ref=f8e257]
+                  - cell "Nordika" [ref=f8e259]
+                  - cell [ref=f8e260]
+                  - cell "Open" [ref=f8e261]
+                  - cell "in_progress" [ref=f8e264]
+                  - cell "30 Jul 2024" [ref=f8e267]
+                  - cell [ref=f8e268]:
+                    - generic [ref=f8e269]:
+                      - link "View" [ref=f8e270]:
+                        - /url: /market-cases/all-cases/16
+                      - button "Edit" [ref=f8e275]
+                - row [ref=f8e279] [cursor=pointer]:
+                  - cell [ref=f8e280]:
+                    - link "CMG-2024-0012" [ref=f8e281]:
+                      - /url: /market-cases/all-cases/15
+                    - link "Open record" [ref=f8e282]:
+                      - /url: /market-cases/all-cases/15
+                  - cell "Renova Installations" [ref=f8e283]
+                  - cell "SolarPeak" [ref=f8e285]
+                  - cell [ref=f8e286]
+                  - cell "Pending Review" [ref=f8e287]
+                  - cell "draft" [ref=f8e290]
+                  - cell "12 Jun 2024" [ref=f8e293]
+                  - cell [ref=f8e294]:
+                    - generic [ref=f8e295]:
+                      - link "View" [ref=f8e296]:
+                        - /url: /market-cases/all-cases/15
+                      - button "Edit" [ref=f8e301]
+                - row [ref=f8e305] [cursor=pointer]:
+                  - cell [ref=f8e306]:
+                    - link "CMG-2024-0011" [ref=f8e307]:
+                      - /url: /market-cases/all-cases/14
+                    - link "Open record" [ref=f8e308]:
+                      - /url: /market-cases/all-cases/14
+                  - cell "Alpine Supply Co." [ref=f8e309]
+                  - cell "KryoGear" [ref=f8e311]
+                  - cell [ref=f8e312]
+                  - cell "Open" [ref=f8e313]
+                  - cell "not_started" [ref=f8e316]
+                  - cell "—" [ref=f8e319]
+                  - cell [ref=f8e320]:
+                    - generic [ref=f8e321]:
+                      - link "View" [ref=f8e322]:
+                        - /url: /market-cases/all-cases/14
+                      - button "Edit" [ref=f8e327]
+                - row [ref=f8e331] [cursor=pointer]:
+                  - cell [ref=f8e332]:
+                    - link "CMG-2023-0003" [ref=f8e333]:
+                      - /url: /market-cases/all-cases/13
+                    - link "Open record" [ref=f8e334]:
+                      - /url: /market-cases/all-cases/13
+                  - cell "City Electronics Market" [ref=f8e335]
+                  - cell "Goldline" [ref=f8e337]
+                  - cell [ref=f8e338]
+                  - cell "closed" [ref=f8e339]
+                  - cell "completed" [ref=f8e342]
+                  - cell "05 Apr 2023" [ref=f8e345]
+                  - cell [ref=f8e346]:
+                    - generic [ref=f8e347]:
+                      - link "View" [ref=f8e348]:
+                        - /url: /market-cases/all-cases/13
+                      - button "Edit" [ref=f8e353]
+                - row [ref=f8e357] [cursor=pointer]:
+                  - cell [ref=f8e358]:
+                    - link "CMG-2023-0002" [ref=f8e359]:
+                      - /url: /market-cases/all-cases/12
+                    - link "Open record" [ref=f8e360]:
+                      - /url: /market-cases/all-cases/12
+                  - cell "FashionFair Exhibit 88" [ref=f8e361]
+                  - cell "Velour" [ref=f8e363]
+                  - cell [ref=f8e364]
+                  - cell "closed" [ref=f8e365]
+                  - cell "completed" [ref=f8e368]
+                  - cell "10 May 2023" [ref=f8e371]
+                  - cell [ref=f8e372]:
+                    - generic [ref=f8e373]:
+                      - link "View" [ref=f8e374]:
+                        - /url: /market-cases/all-cases/12
+                      - button "Edit" [ref=f8e379]
+                - row [ref=f8e383] [cursor=pointer]:
+                  - cell [ref=f8e384]:
+                    - link "CMG-2023-0001" [ref=f8e385]:
+                      - /url: /market-cases/all-cases/11
+                    - link "Open record" [ref=f8e386]:
+                      - /url: /market-cases/all-cases/11
+                  - cell "Orient Traders" [ref=f8e387]
+                  - cell "Aurora Luxe" [ref=f8e389]
+                  - cell [ref=f8e390]
+                  - cell "closed" [ref=f8e391]
+                  - cell "completed" [ref=f8e394]
+                  - cell "02 Sept 2023" [ref=f8e397]
+                  - cell [ref=f8e398]:
+                    - generic [ref=f8e399]:
+                      - link "View" [ref=f8e400]:
+                        - /url: /market-cases/all-cases/11
+                      - button "Edit" [ref=f8e405]
+                - row [ref=f8e409] [cursor=pointer]:
+                  - cell [ref=f8e410]:
+                    - link "CMG-2024-0010" [ref=f8e411]:
+                      - /url: /market-cases/all-cases/10
+                    - link "Open record" [ref=f8e412]:
+                      - /url: /market-cases/all-cases/10
+                  - cell "UrbanForm Studio" [ref=f8e413]
+                  - cell "TerraMod" [ref=f8e415]
+                  - cell [ref=f8e416]
+                  - cell "Open" [ref=f8e417]
+                  - cell "in_progress" [ref=f8e420]
+                  - cell "20 Jul 2024" [ref=f8e423]
+                  - cell [ref=f8e424]:
+                    - generic [ref=f8e425]:
+                      - link "View" [ref=f8e426]:
+                        - /url: /market-cases/all-cases/10
+                      - button "Edit" [ref=f8e431]
+            - generic [ref=f8e435]:
+              - generic [ref=f8e436]: Showing 10 of 19
+              - generic [ref=f8e437]: Scroll for more
+  - button "Open Next.js Dev Tools" [ref=f8e444] [cursor=pointer]

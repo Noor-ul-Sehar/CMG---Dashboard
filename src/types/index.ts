@@ -348,6 +348,8 @@ export interface CaseListResult {
   totalPages: number;
 }
 
+export type CaseSort = "newest" | "oldest" | "az" | "za" | "relevance";
+
 export interface CaseListFilters {
   q?: string;
   status?: string;
@@ -355,7 +357,52 @@ export interface CaseListFilters {
   targetBy?: string | null;
   targetNature?: string | null;
   brand?: string | null;
+  brands?: string[];
   clientReference?: string | null;
+  reportStatus?: string | null;
+  caseType?: string | null;
+  investigator?: string | null;
+  team?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  sort?: CaseSort;
   page?: number;
   perPage?: number;
+}
+
+export interface FacetCount {
+  value: string;
+  label: string;
+  count: number;
+}
+
+export interface FilterFacets {
+  status: FacetCount[];
+  reportStatus: FacetCount[];
+  targetBy: FacetCount[];
+  targetNature: FacetCount[];
+  brand: FacetCount[];
+  caseType: FacetCount[];
+  investigator: FacetCount[];
+  team: FacetCount[];
+}
+
+export interface SearchSuggestionCategory {
+  label: string;
+  value: string;
+  type: "brand" | "targetNature" | "targetBy" | "status";
+}
+
+export interface SearchSuggestions {
+  didYouMean: string | null;
+  relatedKeywords: string[];
+  categories: SearchSuggestionCategory[];
+  popular: string[];
+}
+
+export interface SearchResponse extends CaseListResult {
+  suggestions: SearchSuggestions;
+  facets: FilterFacets;
+  normalizedQuery: string;
+  expandedTerms: string[];
 }

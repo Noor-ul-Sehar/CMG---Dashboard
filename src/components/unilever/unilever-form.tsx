@@ -25,6 +25,8 @@ interface Props {
   mode: "new" | "edit";
   caseData?: UnileverCase | null;
   brands: { id: number; name: string }[];
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 interface FormState {
@@ -71,7 +73,7 @@ function GroupLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function UnileverForm({ mode, caseData, brands }: Props) {
+export function UnileverForm({ mode, caseData, brands, onSuccess, onCancel }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(() => emptyFrom(caseData));
   const [tagInput, setTagInput] = useState("");
@@ -193,8 +195,13 @@ export function UnileverForm({ mode, caseData, brands }: Props) {
       const data = await res.json();
 
       if (res.ok) {
-        router.push(`/unilever/${data.id}`);
-        router.refresh();
+        if (onSuccess) {
+          router.refresh();
+          onSuccess();
+        } else {
+          router.push(`/unilever/${data.id}`);
+          router.refresh();
+        }
         return;
       }
       if (res.status === 409) {
@@ -436,7 +443,7 @@ export function UnileverForm({ mode, caseData, brands }: Props) {
         <Button
           type="button"
           variant="secondary"
-          onClick={() => router.back()}
+          onClick={() => (onCancel ? onCancel() : router.back())}
           disabled={submitting}
         >
           Cancel

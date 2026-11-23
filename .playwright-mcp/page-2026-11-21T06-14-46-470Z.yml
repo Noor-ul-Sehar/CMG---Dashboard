@@ -1,0 +1,114 @@
+- generic [active] [ref=f70e1]:
+  - generic [ref=f70e2]:
+    - complementary [ref=f70e3]:
+      - generic [ref=f70e4]:
+        - link [ref=f70e5] [cursor=pointer]:
+          - /url: /dashboard
+          - generic [ref=f70e6]: CMG
+          - generic [ref=f70e8]:
+            - paragraph [ref=f70e9]: CMG Dashboard
+            - paragraph [ref=f70e10]: Case Management
+        - button "Close menu" [ref=f70e11]
+      - navigation [ref=f70e14]:
+        - generic [ref=f70e15]:
+          - paragraph [ref=f70e16]: Overview
+          - link "Dashboard" [ref=f70e18] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=f70e25]:
+          - paragraph [ref=f70e26]: Market Cases
+          - generic [ref=f70e27]:
+            - link "All Cases" [ref=f70e28] [cursor=pointer]:
+              - /url: /cases
+            - link "Open Cases" [ref=f70e32] [cursor=pointer]:
+              - /url: /cases/open
+            - link "Closed Cases" [ref=f70e37] [cursor=pointer]:
+              - /url: /cases/closed
+            - link "Close 1 Cases" [ref=f70e42] [cursor=pointer]:
+              - /url: /cases/close-1
+            - link "Search Cases" [ref=f70e47] [cursor=pointer]:
+              - /url: /search
+            - link "Import Data" [ref=f70e52] [cursor=pointer]:
+              - /url: /import
+            - link "Reporting & Export" [ref=f70e57] [cursor=pointer]:
+              - /url: /reports
+        - generic [ref=f70e63]:
+          - paragraph [ref=f70e64]: Unilever Cases
+          - link "Unilever Cases" [ref=f70e66] [cursor=pointer]:
+            - /url: /unilever
+        - generic [ref=f70e72]:
+          - paragraph [ref=f70e73]: Custom Recordals
+          - link "Custom Recordals" [ref=f70e75] [cursor=pointer]:
+            - /url: /custom-recordals
+        - generic [ref=f70e81]:
+          - paragraph [ref=f70e82]: Reference
+          - link "CMG Reference Numbers" [ref=f70e84] [cursor=pointer]:
+            - /url: /cmg-references
+        - generic [ref=f70e88]:
+          - paragraph [ref=f70e89]: Admin
+          - generic [ref=f70e90]:
+            - link "Teams" [ref=f70e91] [cursor=pointer]:
+              - /url: /teams
+            - link "Investigators" [ref=f70e98] [cursor=pointer]:
+              - /url: /investigators
+            - link "Users" [ref=f70e103] [cursor=pointer]:
+              - /url: /users
+            - link "Master Data" [ref=f70e110] [cursor=pointer]:
+              - /url: /reference-data
+            - link "Settings" [ref=f70e115] [cursor=pointer]:
+              - /url: /settings
+      - generic [ref=f70e120]:
+        - generic [ref=f70e121]:
+          - generic [ref=f70e122]: AC
+          - generic [ref=f70e123]:
+            - paragraph [ref=f70e124]: Alex Carter
+            - paragraph [ref=f70e125]: admin@cmg.internal
+        - paragraph [ref=f70e126]: CMG Case Management System
+    - generic [ref=f70e127]:
+      - banner [ref=f70e128]:
+        - button "Open menu" [ref=f70e129]
+        - heading "Unilever Cases" [level=1] [ref=f70e133]
+        - button "AC" [ref=f70e135]
+      - main [ref=f70e137]:
+        - generic [ref=f70e139]:
+          - generic [ref=f70e140]:
+            - generic [ref=f70e141]:
+              - heading "Unilever Cases" [level=1] [ref=f70e142]
+              - paragraph [ref=f70e143]: Independent Unilever case-management module.
+            - button "New Unilever Case" [ref=f70e145]
+          - generic [ref=f70e146]:
+            - 'link "Total Unilever Cases: 0. View cases." [ref=f70e147] [cursor=pointer]':
+              - /url: /unilever
+              - generic [ref=f70e148]:
+                - paragraph [ref=f70e150]: Total Unilever Cases
+                - paragraph [ref=f70e151]: "0"
+            - 'link "Open: 0. View cases." [ref=f70e152] [cursor=pointer]':
+              - /url: /unilever?status=open
+              - generic [ref=f70e153]:
+                - paragraph [ref=f70e155]: Open
+                - paragraph [ref=f70e156]: "0"
+            - 'link "Close 1: 0. View cases." [ref=f70e157] [cursor=pointer]':
+              - /url: /unilever?status=close_1
+              - generic [ref=f70e158]:
+                - paragraph [ref=f70e160]: Close 1
+                - paragraph [ref=f70e161]: "0"
+            - 'link "Closed: 0. View cases." [ref=f70e162] [cursor=pointer]':
+              - /url: /unilever?status=close
+              - generic [ref=f70e163]:
+                - paragraph [ref=f70e165]: Closed
+                - paragraph [ref=f70e166]: "0"
+          - generic [ref=f70e168]:
+            - textbox "Search Unilever cases" [ref=f70e170]:
+              - /placeholder: Search CMG ref, client ref, target, brand…
+            - button "Filters" [ref=f70e171]
+          - generic [ref=f70e173]:
+            - heading "No Unilever Cases yet" [level=3] [ref=f70e178]
+            - paragraph [ref=f70e179]: Create your first Unilever case to get started.
+            - button "+ New Unilever Case" [ref=f70e181]
+          - generic [ref=f70e182]:
+            - paragraph [ref=f70e183]: 0 cases
+            - generic [ref=f70e184]:
+              - button "Previous" [disabled] [ref=f70e185]
+              - generic [ref=f70e186]: Page 1 of 1
+              - button "Next" [disabled] [ref=f70e187]
+  - button "Open Next.js Dev Tools" [ref=f70e193] [cursor=pointer]
+  - alert [ref=f70e197]

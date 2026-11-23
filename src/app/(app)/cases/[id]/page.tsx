@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import { getFullCaseProfile } from "@/lib/services/case-service";
+import { listMasterOptions } from "@/lib/services/master-service";
 import { getSessionUser } from "@/lib/auth/session";
 import { profileCapabilities } from "@/lib/permissions";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
-import { LinkButton } from "@/components/ui/link-button";
 import { ErrorState, EmptyState } from "@/components/ui/states";
+import { CaseFormModal } from "@/components/cases/case-form-modal";
 import { AddRemarkForm } from "@/components/cases/add-remark-form";
 import { AddReviewForm } from "@/components/cases/add-review-form";
 import { DocumentsPanel } from "@/components/cases/documents-panel";
@@ -16,6 +17,7 @@ import {
   TimelineEmpty,
   TimelineItem,
 } from "@/components/cases/case-profile-parts";
+import type { RecordalInput } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +48,23 @@ export default async function CaseProfilePage({
 
   const c = profile.case;
 
+  let targetBy: { id: number; name: string }[] = [];
+  let targetNatures: { id: number; name: string }[] = [];
+  let brands: { id: number; name: string }[] = [];
+  try {
+    [targetBy, targetNatures, brands] = await Promise.all([
+      listMasterOptions("target_by"),
+      listMasterOptions("target_natures"),
+      listMasterOptions("brands"),
+    ]);
+  } catch {}
+
+  const recordals: RecordalInput[] = profile.recordals.map((r) => ({
+    recordalDate: r.recordalDate,
+    brandCmgCaseRef: r.brandCmgCaseRef,
+    brandCaseRef: r.brandCaseRef,
+  }));
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -53,9 +72,16 @@ export default async function CaseProfilePage({
         description={`${c.cmgReference}${c.clientReference ? ` · Client ref ${c.clientReference}` : ""}`}
         actions={
           canEdit ? (
-            <LinkButton href={`/cases/${id}/edit`} variant="secondary">
-              Edit Case
-            </LinkButton>
+            <CaseFormModal
+              mode="edit"
+              caseData={c}
+              recordals={recordals}
+              targetBy={targetBy}
+              targetNatures={targetNatures}
+              brands={brands}
+              label="Edit Case"
+              variant="secondary"
+            />
           ) : null
         }
       />

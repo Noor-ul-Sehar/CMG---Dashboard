@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
 import { EmptyState, LoadingState, ErrorState } from "@/components/ui/states";
-import { AlertIcon, PlusIcon, SearchIcon, TrashIcon } from "@/components/icons";
+import { AlertIcon, PlusIcon, TrashIcon } from "@/components/icons";
 import type { CustomRecordal } from "@/types";
 
 interface FormState {
@@ -27,6 +27,8 @@ export function CustomRecordalsManager({
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [q, setQ] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const [modal, setModal] = useState<
     { mode: "create" } | { mode: "edit"; recordal: CustomRecordal } | null
   >(null);
@@ -160,6 +162,72 @@ export function CustomRecordalsManager({
     );
   }
 
+  function openFilters() {
+    setDraftQ(q);
+    setFiltersOpen(true);
+  }
+
+  function applyFilters() {
+    setQ(draftQ);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftQ("");
+    setQ("");
+    setFiltersOpen(false);
+  }
+
+  const columns: Column<CustomRecordal>[] = [
+    {
+      key: "recordalDate",
+      header: "Recordal Date",
+      cell: (r) => <span className="whitespace-nowrap text-zinc-700">{r.recordalDate ?? "—"}</span>,
+    },
+    {
+      key: "clientRef",
+      header: "Client Reference #",
+      cell: (r) => <span className="font-medium text-zinc-900">{r.clientRef}</span>,
+    },
+    {
+      key: "cmgRef",
+      header: "CMG Reference #",
+      cell: (r) => <span className="text-zinc-700">{r.cmgRef}</span>,
+    },
+    {
+      key: "brand",
+      header: "Brand",
+      cell: (r) => <span className="text-zinc-700">{r.brand}</span>,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (r) =>
+        canManage ? (
+          <div className="relative z-10 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => openEdit(r)}
+              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setServerError(null);
+                setDeleteTarget(r);
+              }}
+              className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700"
+            >
+              <TrashIcon className="h-3.5 w-3.5" />
+              Delete
+            </button>
+          </div>
+        ) : null,
+    },
+  ];
+
   return (
     <div className="space-y-5">
       {serverError ? (
@@ -170,16 +238,15 @@ export function CustomRecordalsManager({
       ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search by recordal date, client reference, CMG reference or brand…"
-            className="w-80 pl-9"
-            aria-label="Search custom recordals"
-          />
-        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={openFilters}
+          aria-haspopup="dialog"
+        >
+          Filters{q ? " (1)" : ""}
+        </Button>
         <Button
           type="button"
           onClick={openCreate}
@@ -191,8 +258,41 @@ export function CustomRecordalsManager({
         </Button>
       </div>
 
-      <Card>
-        {filtered.length === 0 ? (
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filter custom recordals"
+        description="Leave blank to show all recordals. Apply to update the list."
+        size="lg"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={clearFilters}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <Field label="Search" hint="Matches date, client reference, CMG reference, or brand.">
+          <Input
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder="Search by date, reference or brand…"
+            aria-label="Search custom recordals"
+          />
+        </Field>
+      </Modal>
+
+      <DataTable
+        columns={columns}
+        rows={filtered}
+        rowKey={(r) => r.id}
+        empty={
           recordals.length === 0 ? (
             <EmptyState
               title="No Custom Recordals yet"
@@ -205,60 +305,10 @@ export function CustomRecordalsManager({
               }
             />
           ) : (
-            <div className="px-6 py-12 text-center text-sm text-zinc-500">
-              No custom recordals match your search.
-            </div>
+            "No custom recordals match your search."
           )
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Recordal Date</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Client Reference #</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">CMG Reference #</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Brand</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((r) => (
-                  <tr key={r.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                    <td className="whitespace-nowrap px-4 py-3 text-zinc-700">{r.recordalDate ?? "—"}</td>
-                    <td className="px-4 py-3 font-medium text-zinc-900">{r.clientRef}</td>
-                    <td className="px-4 py-3 text-zinc-700">{r.cmgRef}</td>
-                    <td className="px-4 py-3 text-zinc-700">{r.brand}</td>
-                    <td className="px-4 py-3">
-                      {canManage ? (
-                        <div className="flex items-center gap-3">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(r)}
-                            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setServerError(null);
-                              setDeleteTarget(r);
-                            }}
-                            className="inline-flex items-center gap-1 text-sm font-medium text-red-600 hover:text-red-700"
-                          >
-                            <TrashIcon className="h-3.5 w-3.5" />
-                            Delete
-                          </button>
-                        </div>
-                      ) : null}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+        }
+      />
 
       <Modal
         open={modal !== null}
@@ -268,6 +318,7 @@ export function CustomRecordalsManager({
             ? "Edit Custom Recordal"
             : "Add New Custom Recordal"
         }
+        size="lg"
         description="Custom recordals are independent — they are not linked to Market Cases."
         footer={
           <>

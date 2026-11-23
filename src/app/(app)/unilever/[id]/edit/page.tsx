@@ -21,7 +21,7 @@ export default async function EditUnileverCasePage({
 
   const user = await getSessionUser();
   if (!user || !can(user, "cases.edit")) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
 
   let caseData: UnileverCase | null;

@@ -1,4 +1,5 @@
 import { db, query, queryOne } from "@/lib/db/client";
+import { buildSearchGroups, normalizeSearchText } from "@/lib/search/text";
 import {
   DuplicateReferenceError,
   normalizeReference,
@@ -167,61 +168,132 @@ export async function getFullCaseProfile(id: number): Promise<CaseFullProfile | 
 // ------------------------------------------------------------------
 
 export async function getCaseFilterOptions() {
-  const [brands, targetBy, targetNatures] = await Promise.all([
-    query<{ brand: string }>(
-      `SELECT name AS brand FROM brands
-       UNION
-       SELECT DISTINCT brand FROM cases WHERE brand IS NOT NULL AND brand <> ''
-       ORDER BY brand`
-    ),
-    query<{ id: number; name: string }>(
-      `SELECT id, name FROM target_by WHERE is_active ORDER BY name`
-    ),
-    query<{ name: string }>(
-      `SELECT DISTINCT COALESCE(target_nature, '') AS name FROM cases
-       WHERE target_nature IS NOT NULL AND target_nature <> ''
-       UNION
-       SELECT name FROM target_natures WHERE is_active AND name <> ''
-       ORDER BY name`
-    ),
-  ]);
+  const [brands, targetBy, targetNatures, investigators, teams, caseTypes] =
+    await Promise.all([
+      query<{ brand: string }>(
+        `SELECT name AS brand FROM brands
+         UNION
+         SELECT DISTINCT brand FROM cases WHERE brand IS NOT NULL AND brand <> ''
+         ORDER BY brand`
+      ),
+      query<{ id: number; name: string }>(
+        `SELECT id, name FROM target_by WHERE is_active ORDER BY name`
+      ),
+      query<{ name: string }>(
+        `SELECT DISTINCT COALESCE(target_nature, '') AS name FROM cases
+         WHERE target_nature IS NOT NULL AND target_nature <> ''
+         UNION
+         SELECT name FROM target_natures WHERE is_active AND name <> ''
+         ORDER BY name`
+      ),
+      query<{ id: number; name: string }>(
+        `SELECT id, name FROM investigators WHERE is_active ORDER BY name`
+      ),
+      query<{ id: number; name: string }>(
+        `SELECT id, name FROM teams WHERE is_active ORDER BY name`
+      ),
+      query<{ case_type: string }>(
+        `SELECT DISTINCT case_type FROM cases
+         WHERE case_type IS NOT NULL AND case_type <> '' ORDER BY case_type`
+      ),
+    ]);
   return {
     brands: brands.map((b) => b.brand),
     targetBy,
     targetNatures: targetNatures.map((t) => t.name),
+    investigators: investigators.map((i) => ({ id: i.id, name: i.name })),
+    teams: teams.map((t) => ({ id: t.id, name: t.name })),
+    caseTypes: caseTypes.map((c) => c.case_type),
   };
 }
+
+export type CaseFilterOptions = Awaited<ReturnType<typeof getCaseFilterOptions>>;
 
 /**
  * Builds the parameterized WHERE clause shared by search, reporting and
  * export. Returns the raw SQL conditions plus their bound parameters.
+ *
+ * Search terms are grouped so every typed token must match somewhere, while
+ * synonyms are OR'd inside each group. Trigram similarity adds typo tolerance
+ * without widening results to unrelated cases.
  */
 export function buildCaseConditions(filters: CaseListFilters): {
   conditions: string[];
   params: unknown[];
+  relevanceSql?: string;
+  normalizedQuery: string;
+  expandedTerms: string[];
 } {
   const conditions: string[] = [];
   const params: unknown[] = [];
+  let relevanceSql: string | undefined;
+  let normalizedQuery = "";
+  let expandedTerms: string[] = [];
 
   const q = filters.q?.trim();
   if (q) {
-    params.push(`%${q}%`);
-    conditions.push(
-      `(c.cmg_reference ILIKE $${params.length} OR
-        c.client_reference ILIKE $${params.length} OR
-        c.title ILIKE $${params.length} OR
-        c.target_name ILIKE $${params.length} OR
-        c.target_nature ILIKE $${params.length} OR
-        c.target_owner ILIKE $${params.length} OR
-        c.city ILIKE $${params.length} OR
-        c.brand ILIKE $${params.length} OR
-        tb.name ILIKE $${params.length} OR
-        EXISTS (
-          SELECT 1 FROM case_brands qcb
-          JOIN brands qb ON qb.id = qcb.brand_id
-          WHERE qcb.case_id = c.id AND qb.name ILIKE $${params.length}
-        ))`
-    );
+    const { original, groups } = buildSearchGroups(q);
+    normalizedQuery = normalizeSearchText(q);
+    expandedTerms = groups.flat().filter((term) => !original.includes(term));
+
+    if (groups.length > 0) {
+      const likeColumns = [
+        "c.cmg_reference",
+        "c.client_reference",
+        "c.title",
+        "c.target_name",
+        "c.target_nature",
+        "c.target_owner",
+        "c.city",
+        "c.brand",
+        "c.case_type",
+        "c.notes",
+        "tb.name",
+      ];
+      const trigramColumns = [
+        "c.cmg_reference",
+        "c.client_reference",
+        "c.title",
+        "c.target_name",
+        "c.brand",
+      ];
+
+      const termGroups = groups.map((alternatives) => {
+        const alternativesSql = alternatives.map((term) => {
+          params.push(`%${term}%`);
+          const like = `$${params.length}`;
+          const likeSql = [
+            ...likeColumns.map((column) => `${column} ILIKE ${like}`),
+            `EXISTS (
+               SELECT 1 FROM case_brands qcb
+               JOIN brands qb ON qb.id = qcb.brand_id
+               WHERE qcb.case_id = c.id AND qb.name ILIKE ${like}
+             )`,
+          ];
+          if (term.length < 4 || !/^[a-z]+$/.test(term)) {
+            return `(${likeSql.join(" OR ")})`;
+          }
+
+          params.push(term);
+          const similar = `$${params.length}`;
+          const similaritySql = trigramColumns.map(
+            (column) => `similarity(${column}, ${similar}) > 0.32`
+          );
+          return `(${[...likeSql, ...similaritySql].join(" OR ")})`;
+        });
+        return `(${alternativesSql.join(" OR ")})`;
+      });
+      conditions.push(`(${termGroups.join(" AND ")})`);
+
+      const queryLiteral = `'${normalizedQuery.replace(/'/g, "''")}'`;
+      relevanceSql = `GREATEST(
+        COALESCE(similarity(c.title, ${queryLiteral}), 0),
+        COALESCE(similarity(c.target_name, ${queryLiteral}), 0),
+        COALESCE(similarity(c.cmg_reference, ${queryLiteral}), 0),
+        COALESCE(similarity(c.client_reference, ${queryLiteral}), 0),
+        COALESCE(similarity(c.brand, ${queryLiteral}), 0)
+      )`;
+    }
   }
 
   if (filters.status) {
@@ -232,7 +304,7 @@ export function buildCaseConditions(filters: CaseListFilters): {
     params.push(filters.statusIn);
     conditions.push(`c.status::text = ANY($${params.length})`);
   }
-  if (filters.targetBy) {
+  if (filters.targetBy && /^\d+$/.test(filters.targetBy)) {
     params.push(filters.targetBy);
     conditions.push(`c.target_by_id = $${params.length}::int`);
   }
@@ -254,12 +326,46 @@ export function buildCaseConditions(filters: CaseListFilters): {
        ))`
     );
   }
+  if (filters.brands && filters.brands.length > 0) {
+    params.push(filters.brands);
+    conditions.push(
+      `(c.brand = ANY($${params.length}) OR EXISTS (
+         SELECT 1 FROM case_brands cb2
+         JOIN brands b2 ON b2.id = cb2.brand_id
+         WHERE cb2.case_id = c.id AND b2.name = ANY($${params.length})
+       ))`
+    );
+  }
   if (filters.clientReference?.trim()) {
     params.push(`%${filters.clientReference.trim()}%`);
     conditions.push(`c.client_reference ILIKE $${params.length}`);
   }
+  if (filters.reportStatus) {
+    params.push(filters.reportStatus);
+    conditions.push(`c.report_status::text = $${params.length}`);
+  }
+  if (filters.caseType?.trim()) {
+    params.push(`%${filters.caseType.trim()}%`);
+    conditions.push(`c.case_type ILIKE $${params.length}`);
+  }
+  if (filters.investigator && /^\d+$/.test(filters.investigator)) {
+    params.push(filters.investigator);
+    conditions.push(`c.investigator_id = $${params.length}::int`);
+  }
+  if (filters.team && /^\d+$/.test(filters.team)) {
+    params.push(filters.team);
+    conditions.push(`c.team_id = $${params.length}::int`);
+  }
+  if (filters.dateFrom && /^\d{4}-\d{2}-\d{2}$/.test(filters.dateFrom)) {
+    params.push(filters.dateFrom);
+    conditions.push(`c.last_updated::date >= $${params.length}::date`);
+  }
+  if (filters.dateTo && /^\d{4}-\d{2}-\d{2}$/.test(filters.dateTo)) {
+    params.push(filters.dateTo);
+    conditions.push(`c.last_updated::date <= $${params.length}::date`);
+  }
 
-  return { conditions, params };
+  return { conditions, params, relevanceSql, normalizedQuery, expandedTerms };
 }
 
 /** Returns every row matching the filters, regardless of size. */
@@ -272,10 +378,30 @@ export async function searchAllCases(
   return query<CaseWithRefs>(`${CASE_SELECT} ${where} ORDER BY ${orderBy}`, params);
 }
 
+export function caseOrderBy(
+  sort: CaseListFilters["sort"],
+  relevanceSql?: string
+): string {
+  switch (sort) {
+    case "oldest":
+      return "c.last_updated ASC NULLS LAST, c.id ASC";
+    case "az":
+      return "c.title ASC NULLS LAST, c.id ASC";
+    case "za":
+      return "c.title DESC NULLS LAST, c.id DESC";
+    case "relevance":
+      return relevanceSql
+        ? `${relevanceSql} DESC, c.last_updated DESC, c.id DESC`
+        : "c.last_updated DESC, c.id DESC";
+    default:
+      return "c.last_updated DESC, c.id DESC";
+  }
+}
+
 export async function searchCases(
   filters: CaseListFilters
 ): Promise<CaseListResult> {
-  const { conditions, params } = buildCaseConditions(filters);
+  const { conditions, params, relevanceSql } = buildCaseConditions(filters);
   const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
   const perPage = Math.min(Math.max(filters.perPage ?? 20, 5), 100);
@@ -294,7 +420,7 @@ export async function searchCases(
   const offset = (currentPage - 1) * perPage;
 
   const rows = await query<CaseWithRefs>(
-    `${CASE_SELECT} ${where} ORDER BY c.last_updated DESC, c.id DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+    `${CASE_SELECT} ${where} ORDER BY ${caseOrderBy(filters.sort, relevanceSql)} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
     [...params, perPage, offset]
   );
 

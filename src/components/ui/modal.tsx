@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { CloseIcon } from "@/components/icons";
+
+const SIZE_CLASSES = {
+  md: "max-w-lg",
+  lg: "max-w-2xl",
+  xl: "max-w-4xl",
+  "2xl": "max-w-6xl",
+} as const;
 
 export function Modal({
   open,
@@ -10,6 +18,8 @@ export function Modal({
   description,
   children,
   footer,
+  size = "md",
+  scrollable = true,
 }: {
   open: boolean;
   onClose: () => void;
@@ -17,6 +27,8 @@ export function Modal({
   description?: string;
   children: ReactNode;
   footer?: ReactNode;
+  size?: keyof typeof SIZE_CLASSES;
+  scrollable?: boolean;
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
@@ -63,16 +75,16 @@ export function Modal({
     };
   }, [open]);
 
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-zinc-900/50 p-4 backdrop-blur-[2px] sm:p-8">
+  if (!open || typeof document === "undefined") return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-zinc-900/50 p-4 backdrop-blur-[2px] sm:p-8">
       <div
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className="w-full max-w-lg rounded-xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/20 focus:outline-none"
+        className={`flex max-h-[calc(100vh-2rem)] w-full flex-col rounded-xl border border-zinc-200 bg-white shadow-2xl shadow-zinc-900/20 focus:outline-none ${SIZE_CLASSES[size]}`}
       >
         <div className="flex items-start justify-between border-b border-zinc-100 px-5 py-4">
           <div>
@@ -92,13 +104,16 @@ export function Modal({
             <CloseIcon className="h-4 w-4" />
           </button>
         </div>
-        <div className="px-5 py-4">{children}</div>
+        <div className={`px-5 py-4 ${scrollable ? "min-h-0 flex-1 overflow-y-auto" : ""}`}>
+          {children}
+        </div>
         {footer ? (
           <div className="flex items-center justify-end gap-3 border-t border-zinc-100 px-5 py-4">
             {footer}
           </div>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

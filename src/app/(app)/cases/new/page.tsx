@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function NewCasePage() {
   const user = await getSessionUser();
   if (!user || !can(user, "cases.create")) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
 
   let targetBy: { id: number; name: string }[];

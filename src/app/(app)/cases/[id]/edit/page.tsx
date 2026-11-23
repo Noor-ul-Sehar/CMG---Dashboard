@@ -22,7 +22,7 @@ export default async function EditCasePage({
 
   const user = await getSessionUser();
   if (!user || !can(user, "cases.edit")) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
 
   let caseData: CaseWithRefs | null;
@@ -49,7 +49,7 @@ export default async function EditCasePage({
         title={`Edit Case ${caseData.cmgReference}`}
         description="Update case information. Changes are recorded in the activity timeline."
         actions={
-          <LinkButton href={`/cases/${id}`} variant="secondary">
+          <LinkButton href={`/market-cases/all-cases/${id}`} variant="secondary">
             View Case Profile
           </LinkButton>
         }

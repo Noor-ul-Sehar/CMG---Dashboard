@@ -1,0 +1,249 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e25] [cursor=pointer]
+  - alert [ref=e29]: Dashboard
+  - generic [ref=e38]:
+    - complementary [ref=e39]:
+      - link [ref=e41] [cursor=pointer]:
+        - /url: /overview/dashboard
+        - generic [ref=e42]: CMG
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: CMG Dashboard
+          - paragraph [ref=e46]: Case Management
+      - navigation [ref=e47]:
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: Overview
+          - link "Dashboard" [ref=e51] [cursor=pointer]:
+            - /url: /overview/dashboard
+        - generic [ref=e59]:
+          - paragraph [ref=e60]: Market Cases
+          - generic [ref=e61]:
+            - link "All Cases" [ref=e62] [cursor=pointer]:
+              - /url: /market-cases/all-cases
+            - link "Open Cases" [ref=e66] [cursor=pointer]:
+              - /url: /market-cases/open-cases
+            - link "Closed Cases" [ref=e71] [cursor=pointer]:
+              - /url: /market-cases/closed-cases
+            - link "Close 1 Cases" [ref=e76] [cursor=pointer]:
+              - /url: /market-cases/close-1-cases
+            - link "Search Cases" [ref=e81] [cursor=pointer]:
+              - /url: /market-cases/search-cases
+            - link "Import Data" [ref=e86] [cursor=pointer]:
+              - /url: /market-cases/import-data
+            - link "Reporting & Export" [ref=e91] [cursor=pointer]:
+              - /url: /market-cases/reporting-export
+        - generic [ref=e97]:
+          - paragraph [ref=e98]: Unilever Cases
+          - link "Unilever Cases" [ref=e100] [cursor=pointer]:
+            - /url: /unilever/cases
+        - generic [ref=e105]:
+          - paragraph [ref=e106]: Custom Recordals
+          - link "Custom Recordals" [ref=e108] [cursor=pointer]:
+            - /url: /custom-recordals/records
+        - generic [ref=e114]:
+          - paragraph [ref=e115]: Reference
+          - link "CMG Reference Numbers" [ref=e117] [cursor=pointer]:
+            - /url: /reference/cmg-reference-numbers
+        - generic [ref=e121]:
+          - paragraph [ref=e122]: Admin
+          - generic [ref=e123]:
+            - link "Teams" [ref=e124] [cursor=pointer]:
+              - /url: /admin/teams
+            - link "Investigators" [ref=e131] [cursor=pointer]:
+              - /url: /admin/investigators
+            - link "Users" [ref=e136] [cursor=pointer]:
+              - /url: /admin/users
+            - link "Master Data" [ref=e143] [cursor=pointer]:
+              - /url: /admin/master-data
+            - link "Settings" [ref=e148] [cursor=pointer]:
+              - /url: /admin/settings
+      - generic [ref=e153]:
+        - generic [ref=e154]:
+          - generic [ref=e155]: AC
+          - generic [ref=e156]:
+            - paragraph [ref=e157]: Alex Carter
+            - paragraph [ref=e158]: admin@cmg.internal
+        - paragraph [ref=e159]: CMG Case Management System
+    - generic [ref=e160]:
+      - banner [ref=e161]:
+        - generic [ref=e162]:
+          - heading "Dashboard" [level=1] [ref=e163]
+          - paragraph [ref=e164]: Overview of all CMG cases
+        - search [ref=e165]:
+          - searchbox "Search cases" [ref=e166]
+        - button "Alex Carter Admin AC" [ref=e168]:
+          - generic [ref=e169]:
+            - generic [ref=e170]: Alex Carter
+            - generic [ref=e171]: Admin
+          - generic [ref=e172]: AC
+      - main [ref=e173]:
+        - generic [ref=e175]:
+          - generic [ref=e177]:
+            - heading "Dashboard" [level=1] [ref=e178]
+            - paragraph [ref=e179]: Create, manage, search and report on your cases — all from one place.
+          - generic [ref=e180]:
+            - button "New Market Case" [ref=e181]
+            - link "Search Cases" [ref=e184] [cursor=pointer]:
+              - /url: /market-cases/search-cases
+            - link "Custom Recordals" [ref=e188] [cursor=pointer]:
+              - /url: /custom-recordals/records
+            - link "Reports" [ref=e193] [cursor=pointer]:
+              - /url: /market-cases/reporting-export
+            - link "Unilever Cases" [ref=e198] [cursor=pointer]:
+              - /url: /unilever/cases
+          - generic [ref=e202]:
+            - 'link "Total Cases: 16. View cases." [ref=e203] [cursor=pointer]':
+              - /url: /market-cases/all-cases
+              - generic [ref=e204]:
+                - paragraph [ref=e206]: Total Cases
+                - paragraph [ref=e207]: "16"
+            - 'link "Open: 5. View cases." [ref=e208] [cursor=pointer]':
+              - /url: /market-cases/open-cases
+              - generic [ref=e209]:
+                - paragraph [ref=e211]: Open
+                - paragraph [ref=e212]: "5"
+            - 'link "Close 1: 0. View cases." [ref=e213] [cursor=pointer]':
+              - /url: /market-cases/close-1-cases
+              - generic [ref=e214]:
+                - paragraph [ref=e216]: Close 1
+                - paragraph [ref=e217]: "0"
+            - 'link "Closed: 0. View cases." [ref=e218] [cursor=pointer]':
+              - /url: /market-cases/closed-cases
+              - generic [ref=e219]:
+                - paragraph [ref=e221]: Closed
+                - paragraph [ref=e222]: "0"
+          - generic [ref=e223]:
+            - generic [ref=e225]:
+              - heading "Cases by Status" [level=3] [ref=e226]
+              - paragraph [ref=e227]: Current state of every case
+            - generic [ref=e229]:
+              - generic [ref=e230]:
+                - 'generic "closed: 6" [ref=e231]'
+                - 'generic "open: 5" [ref=e232]'
+                - 'generic "pending_review: 2" [ref=e233]'
+                - 'generic "pending: 2" [ref=e234]'
+                - 'generic "on_hold: 1" [ref=e235]'
+              - list [ref=e236]:
+                - listitem [ref=e237]:
+                  - generic [ref=e238]: closed
+                  - generic [ref=e240]: "6"
+                - listitem [ref=e241]:
+                  - generic [ref=e242]: Open
+                  - generic [ref=e244]: "5"
+                - listitem [ref=e245]:
+                  - generic [ref=e246]: Pending Review
+                  - generic [ref=e248]: "2"
+                - listitem [ref=e249]:
+                  - generic [ref=e250]: pending
+                  - generic [ref=e252]: "2"
+                - listitem [ref=e253]:
+                  - generic [ref=e254]: on_hold
+                  - generic [ref=e256]: "1"
+          - generic [ref=e257]:
+            - generic [ref=e258]:
+              - generic [ref=e259]:
+                - generic [ref=e260]:
+                  - heading "Recent Cases" [level=3] [ref=e261]
+                  - paragraph [ref=e262]: Most recently updated cases
+                - link "View all" [ref=e263] [cursor=pointer]:
+                  - /url: /market-cases/all-cases
+              - generic [ref=e266]:
+                - table [ref=e268]:
+                  - rowgroup [ref=e269]:
+                    - row [ref=e270]:
+                      - columnheader "CMG Reference" [ref=e271]
+                      - columnheader "Target" [ref=e272]
+                      - columnheader "Brands" [ref=e273]
+                      - columnheader "Case Status" [ref=e274]
+                      - columnheader "Approval Status" [ref=e275]
+                      - columnheader "Last Updated" [ref=e276]
+                  - rowgroup [ref=e277]:
+                    - row [ref=e278] [cursor=pointer]:
+                      - cell [ref=e279]:
+                        - text: CMG-2024-0005
+                        - link "Open record" [ref=e280]:
+                          - /url: /market-cases/all-cases/5
+                      - cell "MediPrint Group" [ref=e281]
+                      - cell "CuraMed" [ref=e283]
+                      - cell "closed" [ref=e284]
+                      - cell "completed" [ref=e287]
+                      - cell "20 Nov 2026" [ref=e290]
+                    - row [ref=e291] [cursor=pointer]:
+                      - cell [ref=e292]:
+                        - text: CMG-2023-0001
+                        - link "Open record" [ref=e293]:
+                          - /url: /market-cases/all-cases/11
+                      - cell "Orient Traders" [ref=e294]
+                      - cell "Aurora Luxe" [ref=e296]
+                      - cell "closed" [ref=e297]
+                      - cell "completed" [ref=e300]
+                      - cell "20 Nov 2026" [ref=e303]
+                    - row [ref=e304] [cursor=pointer]:
+                      - cell [ref=e305]:
+                        - text: CMG-2024-0013
+                        - link "Open record" [ref=e306]:
+                          - /url: /market-cases/all-cases/16
+                      - cell "Grand Bazaar Stall 9" [ref=e307]
+                      - cell "Nordika" [ref=e309]
+                      - cell "Open" [ref=e310]
+                      - cell "in_progress" [ref=e313]
+                      - cell "20 Nov 2026" [ref=e316]
+                    - row [ref=e317] [cursor=pointer]:
+                      - cell [ref=e318]:
+                        - text: CMG-2024-0001
+                        - link "Open record" [ref=e319]:
+                          - /url: /market-cases/all-cases/1
+                      - cell "Evergreen Distribution Ltd." [ref=e320]
+                      - cell "Aurora Luxe" [ref=e322]
+                      - cell "closed" [ref=e323]
+                      - cell "completed" [ref=e326]
+                      - cell "20 Nov 2026" [ref=e329]
+                    - row [ref=e330] [cursor=pointer]:
+                      - cell [ref=e331]:
+                        - text: CMG-2024-0007
+                        - link "Open record" [ref=e332]:
+                          - /url: /market-cases/all-cases/7
+                      - cell "BrightGrid Energy" [ref=e333]
+                      - cell "SolarPeak" [ref=e335]
+                      - cell "pending" [ref=e336]
+                      - cell "in_progress" [ref=e339]
+                      - cell "20 Nov 2026" [ref=e342]
+                    - row [ref=e343] [cursor=pointer]:
+                      - cell [ref=e344]:
+                        - text: CMG-2023-0003
+                        - link "Open record" [ref=e345]:
+                          - /url: /market-cases/all-cases/13
+                      - cell "City Electronics Market" [ref=e346]
+                      - cell "Goldline" [ref=e348]
+                      - cell "closed" [ref=e349]
+                      - cell "completed" [ref=e352]
+                      - cell "20 Nov 2026" [ref=e355]
+                    - row [ref=e356] [cursor=pointer]:
+                      - cell [ref=e357]:
+                        - text: CMG-2024-0006
+                        - link "Open record" [ref=e358]:
+                          - /url: /market-cases/all-cases/6
+                      - cell "SoftCopy Ltd." [ref=e359]
+                      - cell "VertexSoft" [ref=e361]
+                      - cell "Open" [ref=e362]
+                      - cell "not_started" [ref=e365]
+                      - cell "20 Nov 2026" [ref=e368]
+                    - row [ref=e369] [cursor=pointer]:
+                      - cell [ref=e370]:
+                        - text: CMG-2024-0010
+                        - link "Open record" [ref=e371]:
+                          - /url: /market-cases/all-cases/10
+                      - cell "UrbanForm Studio" [ref=e372]
+                      - cell "TerraMod" [ref=e374]
+                      - cell "Open" [ref=e375]
+                      - cell "in_progress" [ref=e378]
+                      - cell "20 Nov 2026" [ref=e381]
+                - generic [ref=e382]: Showing 8 of 8
+            - generic [ref=e385]:
+              - generic [ref=e386]:
+                - generic [ref=e387]:
+                  - heading "Pending Approval" [level=3] [ref=e388]
+                  - paragraph [ref=e389]: Cases currently awaiting approval
+                - link "View all" [ref=e390] [cursor=pointer]:
+                  - /url: /market-cases/all-cases
+              - paragraph [ref=e393]: No pending approvals. All cases are up to date.
+          - paragraph [ref=e394]: Showing live data. KPI cards and rows link to their matching case views.

@@ -6,8 +6,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/states";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { LinkButton } from "@/components/ui/link-button";
-import type { ImportBatch } from "@/types";
+import type { ImportBatch, ImportRowResult } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,54 @@ const STATUS_BADGES: Record<string, string> = {
   cancelled: "bg-zinc-100 text-zinc-600 ring-zinc-500/20",
   failed: "bg-red-50 text-red-700 ring-red-600/20",
 };
+
+const rowColumns: Column<ImportRowResult>[] = [
+  {
+    key: "row",
+    header: "Row",
+    cell: (r) => <span className="tabular-nums text-zinc-700">{r.row}</span>,
+  },
+  {
+    key: "reference",
+    header: "CMG Reference",
+    cell: (r) => (
+      <span className="font-medium tabular-nums text-zinc-900">
+        {r.cmgReference ?? "—"}
+      </span>
+    ),
+  },
+  {
+    key: "status",
+    header: "Status",
+    cell: (r) => {
+      if (r.status === "new") {
+        return <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">New</Badge>;
+      }
+      if (r.status === "duplicate") {
+        return <Badge className="bg-amber-50 text-amber-700 ring-amber-600/20">Duplicate</Badge>;
+      }
+      return <Badge className="bg-red-50 text-red-700 ring-red-600/20">Invalid</Badge>;
+    },
+  },
+  {
+    key: "details",
+    header: "Details",
+    cell: (r) => (
+      <div className="text-xs text-zinc-600">
+        {r.errors?.length
+          ? r.errors.join(" · ")
+          : r.status === "duplicate"
+            ? r.duplicateOfRow
+              ? `Duplicate of row ${r.duplicateOfRow} in this file`
+              : "Already exists in the central database"
+            : "Imported successfully"}
+        {r.warnings?.length ? (
+          <span className="mt-0.5 block text-amber-700">{r.warnings.join(" · ")}</span>
+        ) : null}
+      </div>
+    ),
+  },
+];
 
 export default async function ImportBatchPage({
   params,
@@ -50,7 +99,7 @@ export default async function ImportBatchPage({
         title="Import Report"
         description={batch.filename}
         actions={
-          <LinkButton href="/import" variant="secondary">
+          <LinkButton href="/market-cases/import-data" variant="secondary">
             Back to Import
           </LinkButton>
         }
@@ -82,51 +131,7 @@ export default async function ImportBatchPage({
             {results.length === 0 ? (
               <p className="py-6 text-center text-sm text-zinc-500">No row results recorded.</p>
             ) : (
-              <div className="max-h-96 overflow-auto">
-                <table className="w-full border-collapse text-sm">
-                  <thead className="sticky top-0 bg-white">
-                    <tr className="border-b border-zinc-200 text-left">
-                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Row</th>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">CMG Reference</th>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">Details</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {results.map((r) => (
-                      <tr key={r.row} className="border-b border-zinc-100">
-                        <td className="px-3 py-2 tabular-nums text-zinc-700">{r.row}</td>
-                        <td className="px-3 py-2 font-medium tabular-nums text-zinc-900">
-                          {r.cmgReference ?? "—"}
-                        </td>
-                        <td className="px-3 py-2">
-                          {r.status === "new" ? (
-                            <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">New</Badge>
-                          ) : r.status === "duplicate" ? (
-                            <Badge className="bg-amber-50 text-amber-700 ring-amber-600/20">Duplicate</Badge>
-                          ) : (
-                            <Badge className="bg-red-50 text-red-700 ring-red-600/20">Invalid</Badge>
-                          )}
-                        </td>
-                        <td className="max-w-md px-3 py-2 text-xs text-zinc-600">
-                          {r.errors?.length
-                            ? r.errors.join(" · ")
-                            : r.status === "duplicate"
-                              ? r.duplicateOfRow
-                                ? `Duplicate of row ${r.duplicateOfRow} in this file`
-                                : "Already exists in the central database"
-                              : "Imported successfully"}
-                          {r.warnings?.length ? (
-                            <span className="mt-0.5 block text-amber-700">
-                              {r.warnings.join(" · ")}
-                            </span>
-                          ) : null}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <DataTable columns={rowColumns} rows={results} rowKey={(r) => r.row} />
             )}
           </CardBody>
         </Card>

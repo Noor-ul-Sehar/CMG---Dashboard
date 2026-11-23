@@ -26,9 +26,11 @@ interface Props {
   mode: "new" | "edit";
   caseData?: CaseWithRefs | null;
   targetBy: { id: number; name: string }[];
-  targetNatures: { id: number; name: string }[];
-  brands: { id: number; name: string }[];
+  targetNatures: { id?: number; name: string }[];
+  brands: { id?: number; name: string }[];
   recordals?: RecordalInput[];
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 interface FormState {
@@ -99,7 +101,7 @@ function BrandPicker({
   selected: string[];
   onAdd: (name: string) => void;
   onRemove: (name: string) => void;
-  options: { id: number; name: string }[];
+  options: { id?: number; name: string }[];
   disabled: boolean;
 }) {
   const [query, setQuery] = useState("");
@@ -146,7 +148,7 @@ function BrandPicker({
         {open && available.length > 0 ? (
           <ul className="absolute z-20 mt-1 max-h-48 w-full overflow-auto rounded-md border border-zinc-200 bg-white shadow-lg">
             {available.map((b) => (
-              <li key={b.id}>
+              <li key={b.id ?? b.name}>
                 <button
                   type="button"
                   className="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100"
@@ -203,7 +205,16 @@ function BrandPicker({
   );
 }
 
-export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, recordals }: Props) {
+export function CaseForm({
+  mode,
+  caseData,
+  targetBy,
+  targetNatures,
+  brands,
+  recordals,
+  onSuccess,
+  onCancel,
+}: Props) {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(() => ({
     ...emptyFrom(caseData),
@@ -219,6 +230,7 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
   const abortRef = useRef<AbortController | null>(null);
 
   const originalReference = caseData?.cmgReference ?? "";
+  const recordalsLoaded = mode === "new" || recordals !== undefined;
 
   const sortedNatures = [...targetNatures].sort((a, b) => {
     const ia = MARKET_CASE_TARGET_NATURES.indexOf(a.name);
@@ -344,7 +356,7 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
       targetOwner: form.targetOwner,
       city: form.city,
       brandNames: form.brandNames.map((b) => b.trim()).filter(Boolean),
-      recordals: form.recordals,
+      ...(recordalsLoaded ? { recordals: form.recordals } : {}),
       status: form.status,
       investigationDate: form.investigationDate,
       notes: form.notes,
@@ -364,8 +376,9 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
       const data = await res.json();
 
       if (res.ok) {
-        router.push(`/cases/${data.id}`);
         router.refresh();
+        if (onSuccess) onSuccess();
+        else router.push(`/market-cases/all-cases/${data.id}`);
         return;
       }
       if (res.status === 409) {
@@ -476,7 +489,7 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
             >
               <option value="">Not specified</option>
               {sortedNatures.map((t) => (
-                <option key={t.id} value={t.name}>
+                <option key={t.id ?? t.name} value={t.name}>
                   {t.name}
                 </option>
               ))}
@@ -594,7 +607,7 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
         </CardBody>
       </Card>
 
-      <Card className="mt-6">
+      {recordalsLoaded ? <Card className="mt-6">
         <CardBody>
           <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
             <div>
@@ -666,13 +679,13 @@ export function CaseForm({ mode, caseData, targetBy, targetNatures, brands, reco
             </div>
           )}
         </CardBody>
-      </Card>
+      </Card> : null}
 
       <div className="mt-6 flex items-center justify-end gap-3">
         <Button
           type="button"
           variant="secondary"
-          onClick={() => router.back()}
+          onClick={() => onCancel ? onCancel() : router.back()}
           disabled={submitting}
         >
           Cancel

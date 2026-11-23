@@ -1,0 +1,120 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - complementary [ref=f3e3]:
+      - link [ref=f3e5] [cursor=pointer]:
+        - /url: /overview/dashboard
+        - generic [ref=f3e6]: CMG
+        - generic [ref=f3e8]:
+          - paragraph [ref=f3e9]: CMG Dashboard
+          - paragraph [ref=f3e10]: Case Management
+      - navigation [ref=f3e11]:
+        - generic [ref=f3e12]:
+          - paragraph [ref=f3e13]: Overview
+          - link "Dashboard" [ref=f3e15] [cursor=pointer]:
+            - /url: /overview/dashboard
+        - generic [ref=f3e22]:
+          - paragraph [ref=f3e23]: Market Cases
+          - generic [ref=f3e24]:
+            - link "All Cases" [ref=f3e25] [cursor=pointer]:
+              - /url: /market-cases/all-cases
+            - link "Open Cases" [ref=f3e29] [cursor=pointer]:
+              - /url: /market-cases/open-cases
+            - link "Closed Cases" [ref=f3e34] [cursor=pointer]:
+              - /url: /market-cases/closed-cases
+            - link "Close 1 Cases" [ref=f3e39] [cursor=pointer]:
+              - /url: /market-cases/close-1-cases
+            - link "Search Cases" [ref=f3e44] [cursor=pointer]:
+              - /url: /market-cases/search-cases
+            - link "Import Data" [ref=f3e49] [cursor=pointer]:
+              - /url: /market-cases/import-data
+            - link "Reporting & Export" [ref=f3e55] [cursor=pointer]:
+              - /url: /market-cases/reporting-export
+        - generic [ref=f3e61]:
+          - paragraph [ref=f3e62]: Unilever Cases
+          - link "Unilever Cases" [ref=f3e64] [cursor=pointer]:
+            - /url: /unilever/cases
+        - generic [ref=f3e69]:
+          - paragraph [ref=f3e70]: Custom Recordals
+          - link "Custom Recordals" [ref=f3e72] [cursor=pointer]:
+            - /url: /custom-recordals/records
+        - generic [ref=f3e78]:
+          - paragraph [ref=f3e79]: Reference
+          - link "CMG Reference Numbers" [ref=f3e81] [cursor=pointer]:
+            - /url: /reference/cmg-reference-numbers
+        - generic [ref=f3e85]:
+          - paragraph [ref=f3e86]: Admin
+          - generic [ref=f3e87]:
+            - link "Teams" [ref=f3e88] [cursor=pointer]:
+              - /url: /admin/teams
+            - link "Investigators" [ref=f3e95] [cursor=pointer]:
+              - /url: /admin/investigators
+            - link "Users" [ref=f3e100] [cursor=pointer]:
+              - /url: /admin/users
+            - link "Master Data" [ref=f3e107] [cursor=pointer]:
+              - /url: /admin/master-data
+            - link "Settings" [ref=f3e112] [cursor=pointer]:
+              - /url: /admin/settings
+      - generic [ref=f3e117]:
+        - generic [ref=f3e118]:
+          - generic [ref=f3e119]: AC
+          - generic [ref=f3e120]:
+            - paragraph [ref=f3e121]: Alex Carter
+            - paragraph [ref=f3e122]: admin@cmg.internal
+        - paragraph [ref=f3e123]: CMG Case Management System
+    - generic [ref=f3e124]:
+      - banner [ref=f3e125]:
+        - generic [ref=f3e126]:
+          - heading "Import Data" [level=1] [ref=f3e127]
+          - paragraph [ref=f3e128]: Import case data from Excel or CSV
+        - search [ref=f3e129]:
+          - searchbox "Search cases" [ref=f3e130]
+        - button "Alex Carter Admin AC" [ref=f3e132]:
+          - generic [ref=f3e133]:
+            - generic [ref=f3e134]: Alex Carter
+            - generic [ref=f3e135]: Admin
+          - generic [ref=f3e136]: AC
+      - main [ref=f3e137]:
+        - generic [ref=f3e139]:
+          - generic [ref=f3e141]:
+            - heading "Import Data" [level=1] [ref=f3e142]
+            - paragraph [ref=f3e143]: Upload an Excel or CSV file of Market Case rows and create the cases in one click.
+          - generic [ref=f3e145]:
+            - generic [ref=f3e147]:
+              - heading "1. Upload File" [level=3] [ref=f3e148]
+              - paragraph [ref=f3e149]: Choose an Excel (.xlsx) or CSV file containing Market Case rows.
+            - generic [ref=f3e150]:
+              - generic [ref=f3e151] [cursor=pointer]:
+                - paragraph [ref=f3e155]: Choose a file to upload
+                - paragraph [ref=f3e156]: .xlsx or .csv · up to 20 MB · first row must be column headers
+              - paragraph [ref=f3e157]: Each spreadsheet row becomes one complete Market Case. Columns are recognized automatically — no manual mapping needed.
+          - generic [ref=f3e158]:
+            - generic [ref=f3e160]:
+              - heading "Import History" [level=3] [ref=f3e161]
+              - paragraph [ref=f3e162]: Previous imports and their error reports
+            - generic [ref=f3e163]:
+              - table [ref=f3e165]:
+                - rowgroup [ref=f3e166]:
+                  - row [ref=f3e167]:
+                    - columnheader "File" [ref=f3e168]
+                    - columnheader "Rows" [ref=f3e169]
+                    - columnheader "New" [ref=f3e170]
+                    - columnheader "Duplicates" [ref=f3e171]
+                    - columnheader "Invalid" [ref=f3e172]
+                    - columnheader "Status" [ref=f3e173]
+                    - columnheader "Date" [ref=f3e174]
+                    - columnheader "Report" [ref=f3e175]
+                - rowgroup [ref=f3e176]:
+                  - row [ref=f3e177]:
+                    - cell "cmg-import-test.csv" [ref=f3e178]
+                    - cell "2" [ref=f3e180]
+                    - cell "2" [ref=f3e181]
+                    - cell "0" [ref=f3e182]
+                    - cell "0" [ref=f3e183]
+                    - cell "imported" [ref=f3e184]
+                    - cell "22 Nov 2026, 23:32" [ref=f3e186]
+                    - cell [ref=f3e187]:
+                      - link "View report" [ref=f3e188] [cursor=pointer]:
+                        - /url: /market-cases/import-data/batches/1
+              - generic [ref=f3e189]: Showing 1 of 1
+  - button "Open Next.js Dev Tools" [ref=f3e197] [cursor=pointer]
+  - alert [ref=f3e201]

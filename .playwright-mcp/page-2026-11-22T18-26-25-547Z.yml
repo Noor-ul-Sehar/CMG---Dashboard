@@ -1,0 +1,14 @@
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]: CMG
+    - heading "CMG Case Management" [level=1] [ref=e6]
+    - paragraph [ref=e7]: Authorized personnel only
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]: Email *
+      - textbox "you@cmg.internal" [ref=e13]
+    - generic [ref=e14]:
+      - generic [ref=e15]: Password *
+      - textbox "••••••••" [ref=e17]
+    - button "Sign In" [disabled] [ref=e18]
+  - paragraph [ref=e19]: Access to this system is restricted to authorized CMG team members.

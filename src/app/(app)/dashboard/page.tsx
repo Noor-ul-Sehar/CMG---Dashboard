@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/lib/services/dashboard-service";
+import { listMasterOptions } from "@/lib/services/master-service";
+import { CaseFormModal } from "@/components/cases/case-form-modal";
 import { PageHeader } from "@/components/ui/page-header";
 import { LinkButton } from "@/components/ui/link-button";
 import { StatCard } from "@/components/ui/stat-card";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
-import { DataTable, type Column } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/badge";
 import { ErrorState } from "@/components/ui/states";
 import {
@@ -16,80 +17,22 @@ import {
   SearchIcon,
 } from "@/components/icons";
 import { CASE_STATUS_COLORS } from "@/lib/constants";
-import type { CaseWithRefs } from "@/types";
-import { formatDate } from "@/lib/format";
+import { RecentCasesTable } from "./_components/recent-cases-table";
 
 export const dynamic = "force-dynamic";
 
-const recentColumns: Column<CaseWithRefs>[] = [
-  {
-    key: "ref",
-    header: "CMG Reference",
-    cell: (r) => (
-      <span className="font-medium tabular-nums text-zinc-900">
-        {r.cmgReference}
-      </span>
-    ),
-  },
-  {
-    key: "target",
-    header: "Target",
-    cell: (r) => (
-      <span className="block max-w-56 truncate" title={r.targetName ?? ""}>
-        {r.targetName ?? "—"}
-      </span>
-    ),
-  },
-  {
-    key: "brand",
-    header: "Brands",
-    cell: (r) => {
-      const brands = r.brands ?? [];
-      if (brands.length === 0) return r.brand ?? "—";
-      return (
-        <span className="flex flex-wrap gap-1">
-          {brands.slice(0, 2).map((b) => (
-            <span
-              key={b}
-              className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700"
-            >
-              {b}
-            </span>
-          ))}
-          {brands.length > 2 ? (
-            <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500">
-              +{brands.length - 2}
-            </span>
-          ) : null}
-        </span>
-      );
-    },
-  },
-  {
-    key: "status",
-    header: "Case Status",
-    cell: (r) => <StatusBadge type="case" value={r.status} />,
-  },
-  {
-    key: "reportStatus",
-    header: "Approval Status",
-    cell: (r) => <StatusBadge type="approval" value={r.reportStatus} />,
-  },
-  {
-    key: "updated",
-    header: "Last Updated",
-    cell: (r) => (
-      <span className="tabular-nums text-zinc-500">
-        {formatDate(r.lastUpdated)}
-      </span>
-    ),
-  },
-];
-
 export default async function DashboardPage() {
   let stats: Awaited<ReturnType<typeof getDashboardStats>>;
+  let targetBy: Awaited<ReturnType<typeof listMasterOptions>>;
+  let targetNatures: Awaited<ReturnType<typeof listMasterOptions>>;
+  let brands: Awaited<ReturnType<typeof listMasterOptions>>;
   try {
-    stats = await getDashboardStats();
+    [stats, targetBy, targetNatures, brands] = await Promise.all([
+      getDashboardStats(),
+      listMasterOptions("target_by"),
+      listMasterOptions("target_natures"),
+      listMasterOptions("brands"),
+    ]);
   } catch (err) {
     return (
       <ErrorState
@@ -114,33 +57,38 @@ export default async function DashboardPage() {
       />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-        <LinkButton href="/cases/new" variant="primary" className="justify-start px-4 py-3 text-sm">
-          <PlusIcon className="h-4 w-4" />
-          New Market Case
-        </LinkButton>
-        <LinkButton href="/search" variant="secondary" className="justify-start px-4 py-3 text-sm">
+        <CaseFormModal
+          mode="new"
+          targetBy={targetBy}
+          targetNatures={targetNatures}
+          brands={brands}
+          label="New Market Case"
+          className="justify-start px-4 py-3 text-sm"
+          icon={<PlusIcon className="h-4 w-4" />}
+        />
+        <LinkButton href="/market-cases/search-cases" variant="secondary" className="justify-start px-4 py-3 text-sm">
           <SearchIcon className="h-4 w-4" />
           Search Cases
         </LinkButton>
-        <LinkButton href="/custom-recordals" variant="secondary" className="justify-start px-4 py-3 text-sm">
+        <LinkButton href="/custom-recordals/records" variant="secondary" className="justify-start px-4 py-3 text-sm">
           <LayersIcon className="h-4 w-4" />
           Custom Recordals
         </LinkButton>
-        <LinkButton href="/reports" variant="secondary" className="justify-start px-4 py-3 text-sm">
+        <LinkButton href="/market-cases/reporting-export" variant="secondary" className="justify-start px-4 py-3 text-sm">
           <FileTextIcon className="h-4 w-4" />
           Reports
         </LinkButton>
-        <LinkButton href="/unilever" variant="secondary" className="justify-start px-4 py-3 text-sm">
+        <LinkButton href="/unilever/cases" variant="secondary" className="justify-start px-4 py-3 text-sm">
           <PackageIcon className="h-4 w-4" />
           Unilever Cases
         </LinkButton>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Total Cases" value={stats.total_cases} accent="text-zinc-900" href="/cases" />
-        <StatCard label="Open" value={stats.open_cases} accent="text-emerald-700" href="/cases/open" />
-        <StatCard label="Close 1" value={stats.close_1_cases} accent="text-zinc-600" href="/cases/close-1" />
-        <StatCard label="Closed" value={stats.closed_cases} accent="text-zinc-600" href="/cases/closed" />
+        <StatCard label="Total Cases" value={stats.total_cases} accent="text-zinc-900" href="/market-cases/all-cases" />
+        <StatCard label="Open" value={stats.open_cases} accent="text-emerald-700" href="/market-cases/open-cases" />
+        <StatCard label="Close 1" value={stats.close_1_cases} accent="text-zinc-600" href="/market-cases/close-1-cases" />
+        <StatCard label="Closed" value={stats.closed_cases} accent="text-zinc-600" href="/market-cases/closed-cases" />
       </div>
 
       <Card>
@@ -191,7 +139,7 @@ export default async function DashboardPage() {
             subtitle="Most recently updated cases"
             action={
               <Link
-                href="/cases"
+                href="/market-cases/all-cases"
                 className="inline-flex items-center gap-1 text-sm font-medium text-zinc-600 underline-offset-2 hover:text-zinc-900 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-900 focus-visible:outline-offset-2"
               >
                 View all
@@ -199,12 +147,7 @@ export default async function DashboardPage() {
               </Link>
             }
           />
-          <DataTable
-            columns={recentColumns}
-            rows={stats.recent_cases}
-            empty="No cases found."
-            rowHref={(row) => `/cases/${row.id}`}
-          />
+          <RecentCasesTable rows={stats.recent_cases} />
         </Card>
 
         <Card>
@@ -213,7 +156,7 @@ export default async function DashboardPage() {
             subtitle="Cases currently awaiting approval"
             action={
               <Link
-                href="/cases"
+                href="/market-cases/all-cases"
                 className="inline-flex items-center gap-1 text-sm font-medium text-zinc-600 underline-offset-2 hover:text-zinc-900 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-900 focus-visible:outline-offset-2"
               >
                 View all
@@ -230,7 +173,7 @@ export default async function DashboardPage() {
               {stats.important_pending.map((c) => (
                 <li key={c.id} className="px-5 py-3">
                   <Link
-                    href={`/cases/${c.id}`}
+                    href={`/market-cases/all-cases/${c.id}`}
                     className="block rounded-md -mx-1 px-1 transition-colors hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-900"
                   >
                     <div className="flex items-center justify-between gap-2">

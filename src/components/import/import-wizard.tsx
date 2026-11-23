@@ -329,6 +329,19 @@ export function ImportWizard() {
               </div>
             ) : null}
 
+            {summary && summary.problems.length > 0 ? (
+              <div>
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  Rows needing attention
+                </p>
+                <ul className="divide-y divide-zinc-100 rounded-lg border border-zinc-200/70 px-4">
+                  {summary.problems.map((problem) => (
+                    <ProblemRow key={problem.row} problem={problem} />
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div className="flex items-center gap-3 border-t border-zinc-100 pt-4">
               <Button onClick={handleImport} disabled={busy || !fieldMapping.cmg_reference}>
                 {busy ? "Importing…" : "Import Market Cases"}
@@ -369,8 +382,8 @@ export function ImportWizard() {
             ) : null}
 
             <div className="flex flex-wrap items-center gap-3 border-t border-zinc-100 pt-4">
-              <LinkButton href="/cases">View Imported Cases</LinkButton>
-              <LinkButton href={`/import/batches/${result.batchId}`} variant="secondary">
+              <LinkButton href="/market-cases/all-cases">View Imported Cases</LinkButton>
+              <LinkButton href={`/market-cases/import-data/batches/${result.batchId}`} variant="secondary">
                 View Import Report
               </LinkButton>
               <Button type="button" variant="ghost" onClick={reset}>

@@ -40,7 +40,7 @@ export function Header({
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim();
-    router.push(q ? `/search?q=${encodeURIComponent(q)}` : "/search");
+    router.push(q ? `/market-cases/search-cases?q=${encodeURIComponent(q)}` : "/market-cases/search-cases");
   }
 
   async function logout() {

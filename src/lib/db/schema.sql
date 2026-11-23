@@ -3,6 +3,10 @@
 -- PostgreSQL is the permanent source of truth.
 -- =============================================================
 
+-- Trigram similarity powers typo-tolerant, partial-match search.
+-- pg_trgm is a trusted extension: the database owner may create it.
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- ------------------------------------------------------------------
 -- ENUMS
 -- ------------------------------------------------------------------
@@ -131,6 +135,16 @@ CREATE INDEX IF NOT EXISTS idx_cases_brand ON cases(brand);
 CREATE INDEX IF NOT EXISTS idx_cases_target_name ON cases(target_name);
 CREATE INDEX IF NOT EXISTS idx_cases_case_type ON cases(case_type);
 CREATE INDEX IF NOT EXISTS idx_cases_closing_date ON cases(closing_date);
+CREATE INDEX IF NOT EXISTS idx_cases_last_updated ON cases(last_updated DESC);
+CREATE INDEX IF NOT EXISTS idx_cases_report_status ON cases(report_status);
+CREATE INDEX IF NOT EXISTS idx_cases_investigation_date ON cases(investigation_date);
+CREATE INDEX IF NOT EXISTS idx_cases_client ON cases(client);
+CREATE INDEX IF NOT EXISTS idx_cases_cmg_reference_trgm ON cases USING gin (cmg_reference gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_client_reference_trgm ON cases USING gin (client_reference gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_title_trgm ON cases USING gin (title gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_target_name_trgm ON cases USING gin (target_name gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_brand_trgm ON cases USING gin (brand gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS idx_cases_notes_trgm ON cases USING gin (notes gin_trgm_ops);
 
 -- ------------------------------------------------------------------
 -- REMARKS  (append-only history)
@@ -317,6 +331,16 @@ CREATE TABLE IF NOT EXISTS clients (
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Master-reference foreign keys on cases (used by case forms, filters,
+-- dashboard joins, imports and master-list usage counts).
+ALTER TABLE cases ADD COLUMN IF NOT EXISTS target_by_id INTEGER REFERENCES target_by(id) ON DELETE SET NULL;
+ALTER TABLE cases ADD COLUMN IF NOT EXISTS target_nature_id INTEGER REFERENCES target_natures(id) ON DELETE SET NULL;
+ALTER TABLE cases ADD COLUMN IF NOT EXISTS target_id INTEGER REFERENCES targets(id) ON DELETE SET NULL;
+
+CREATE INDEX IF NOT EXISTS idx_cases_target_by_id ON cases(target_by_id);
+CREATE INDEX IF NOT EXISTS idx_cases_target_nature_id ON cases(target_nature_id);
+CREATE INDEX IF NOT EXISTS idx_cases_target_id ON cases(target_id);
+
 -- Many-to-many link between cases and brands.
 CREATE TABLE IF NOT EXISTS case_brands (
   case_id       INTEGER NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
@@ -358,8 +382,8 @@ INSERT INTO target_natures (name) VALUES
   ('Bags & Accessories')
 ON CONFLICT (name) DO NOTHING;
 
--- New cases default to Open / Pending Approval.
-ALTER TABLE cases ALTER COLUMN report_status SET DEFAULT 'pending_approval';
+-- New cases default to Open / Pending Approval (set in migrate.ts after
+-- the new enum values are committed).
 
 -- ============================================================
 -- PHASE 15: RECORDALS (additive)

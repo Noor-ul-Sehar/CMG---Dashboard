@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export default async function UsersPage() {
   const user = await getSessionUser();
   if (!user || !canManageUsers(user)) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
 
   let users;

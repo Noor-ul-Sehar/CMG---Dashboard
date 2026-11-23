@@ -36,7 +36,7 @@ export function ChangePasswordForm({ force = false }: { force?: boolean }) {
         else setError(data.error ?? "Unable to change the password.");
         return;
       }
-      router.push("/dashboard");
+      router.push("/overview/dashboard");
       router.refresh();
     } catch {
       setError("Unable to reach the server. Please try again.");

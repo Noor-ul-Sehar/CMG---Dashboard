@@ -1,0 +1,151 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e2]:
+    - complementary [ref=f7e3]:
+      - link [ref=f7e5] [cursor=pointer]:
+        - /url: /overview/dashboard
+        - generic [ref=f7e6]: CMG
+        - generic [ref=f7e8]:
+          - paragraph [ref=f7e9]: CMG Dashboard
+          - paragraph [ref=f7e10]: Case Management
+      - navigation [ref=f7e11]:
+        - generic [ref=f7e12]:
+          - paragraph [ref=f7e13]: Overview
+          - link "Dashboard" [ref=f7e15] [cursor=pointer]:
+            - /url: /overview/dashboard
+        - generic [ref=f7e22]:
+          - paragraph [ref=f7e23]: Market Cases
+          - generic [ref=f7e24]:
+            - link "All Cases" [ref=f7e25] [cursor=pointer]:
+              - /url: /market-cases/all-cases
+            - link "Open Cases" [ref=f7e29] [cursor=pointer]:
+              - /url: /market-cases/open-cases
+            - link "Closed Cases" [ref=f7e34] [cursor=pointer]:
+              - /url: /market-cases/closed-cases
+            - link "Close 1 Cases" [ref=f7e39] [cursor=pointer]:
+              - /url: /market-cases/close-1-cases
+            - link "Search Cases" [ref=f7e44] [cursor=pointer]:
+              - /url: /market-cases/search-cases
+            - link "Import Data" [ref=f7e49] [cursor=pointer]:
+              - /url: /market-cases/import-data
+            - link "Reporting & Export" [ref=f7e54] [cursor=pointer]:
+              - /url: /market-cases/reporting-export
+        - generic [ref=f7e60]:
+          - paragraph [ref=f7e61]: Unilever Cases
+          - link "Unilever Cases" [ref=f7e63] [cursor=pointer]:
+            - /url: /unilever/cases
+        - generic [ref=f7e68]:
+          - paragraph [ref=f7e69]: Custom Recordals
+          - link "Custom Recordals" [ref=f7e71] [cursor=pointer]:
+            - /url: /custom-recordals/records
+        - generic [ref=f7e77]:
+          - paragraph [ref=f7e78]: Reference
+          - link "CMG Reference Numbers" [ref=f7e80] [cursor=pointer]:
+            - /url: /reference/cmg-reference-numbers
+        - generic [ref=f7e84]:
+          - paragraph [ref=f7e85]: Admin
+          - generic [ref=f7e86]:
+            - link "Teams" [ref=f7e87] [cursor=pointer]:
+              - /url: /admin/teams
+            - link "Investigators" [ref=f7e94] [cursor=pointer]:
+              - /url: /admin/investigators
+            - link "Users" [ref=f7e99] [cursor=pointer]:
+              - /url: /admin/users
+            - link "Master Data" [ref=f7e106] [cursor=pointer]:
+              - /url: /admin/master-data
+            - link "Settings" [ref=f7e111] [cursor=pointer]:
+              - /url: /admin/settings
+      - generic [ref=f7e116]:
+        - generic [ref=f7e117]:
+          - generic [ref=f7e118]: AC
+          - generic [ref=f7e119]:
+            - paragraph [ref=f7e120]: Alex Carter
+            - paragraph [ref=f7e121]: admin@cmg.internal
+        - paragraph [ref=f7e122]: CMG Case Management System
+    - generic [ref=f7e123]:
+      - banner [ref=f7e124]:
+        - generic [ref=f7e125]:
+          - heading "CMG Dashboard" [level=1] [ref=f7e126]
+          - paragraph [ref=f7e127]: Case Management
+        - search [ref=f7e128]:
+          - searchbox "Search cases" [ref=f7e129]
+        - button "Alex Carter Admin AC" [ref=f7e131]:
+          - generic [ref=f7e132]:
+            - generic [ref=f7e133]: Alex Carter
+            - generic [ref=f7e134]: Admin
+          - generic [ref=f7e135]: AC
+      - main [ref=f7e136]:
+        - generic [ref=f7e138]:
+          - generic [ref=f7e139]:
+            - generic [ref=f7e140]:
+              - heading "Import Report" [level=1] [ref=f7e141]
+              - paragraph [ref=f7e142]: cmg-import-test.csv
+            - link "Back to Import" [ref=f7e144] [cursor=pointer]:
+              - /url: /market-cases/import-data
+          - generic [ref=f7e145]:
+            - generic [ref=f7e146]:
+              - paragraph [ref=f7e147]: Total Rows
+              - paragraph [ref=f7e148]: "2"
+            - generic [ref=f7e149]:
+              - paragraph [ref=f7e150]: Imported
+              - paragraph [ref=f7e151]: "2"
+            - generic [ref=f7e152]:
+              - paragraph [ref=f7e153]: Duplicates
+              - paragraph [ref=f7e154]: "0"
+            - generic [ref=f7e155]:
+              - paragraph [ref=f7e156]: Invalid
+              - paragraph [ref=f7e157]: "0"
+          - generic [ref=f7e158]:
+            - generic [ref=f7e159]:
+              - generic [ref=f7e161]:
+                - heading "Row Report" [level=3] [ref=f7e162]
+                - paragraph [ref=f7e163]: Every row classified after validation
+              - generic [ref=f7e165]:
+                - table [ref=f7e167]:
+                  - rowgroup [ref=f7e168]:
+                    - row [ref=f7e169]:
+                      - columnheader "Row" [ref=f7e170]
+                      - columnheader "CMG Reference" [ref=f7e171]
+                      - columnheader "Status" [ref=f7e172]
+                      - columnheader "Details" [ref=f7e173]
+                  - rowgroup [ref=f7e174]:
+                    - row [ref=f7e175]:
+                      - cell "2" [ref=f7e176]
+                      - cell "CMG-IMPORT-TEST-0001" [ref=f7e177]
+                      - cell "New" [ref=f7e178]
+                      - cell "Imported successfully" [ref=f7e180]
+                    - row [ref=f7e182]:
+                      - cell "3" [ref=f7e183]
+                      - cell "CMG-IMPORT-TEST-0002" [ref=f7e184]
+                      - cell "New" [ref=f7e185]
+                      - cell "Imported successfully" [ref=f7e187]
+                - generic [ref=f7e189]: Showing 2 of 2
+            - generic [ref=f7e192]:
+              - heading "Batch Information" [level=3] [ref=f7e195]
+              - generic [ref=f7e196]:
+                - generic [ref=f7e197]:
+                  - term [ref=f7e198]: Status
+                  - definition [ref=f7e199]:
+                    - generic [ref=f7e200]: imported
+                - generic [ref=f7e201]:
+                  - term [ref=f7e202]: Created
+                  - definition [ref=f7e203]: 22 Nov 2026, 23:32
+                - generic [ref=f7e204]:
+                  - term [ref=f7e205]: Completed
+                  - definition [ref=f7e206]: 22 Nov 2026, 23:32
+                - generic [ref=f7e207]:
+                  - term [ref=f7e208]: Column Mapping
+                  - definition [ref=f7e209]:
+                    - list [ref=f7e210]:
+                      - listitem [ref=f7e211]: City ← City
+                      - listitem [ref=f7e212]: Brand ← Brand
+                      - listitem [ref=f7e213]: Notes / Remarks ← Notes
+                      - listitem [ref=f7e214]: Case Title ← Title
+                      - listitem [ref=f7e215]: Case Status ← Status
+                      - listitem [ref=f7e216]: Target By ← Target By
+                      - listitem [ref=f7e217]: Target Name ← Target Name
+                      - listitem [ref=f7e218]: CMG Reference Number ← CMG Reference
+                      - listitem [ref=f7e219]: Approval Status ← Report Status
+                      - listitem [ref=f7e220]: Target Nature ← Target Nature
+                      - listitem [ref=f7e221]: Client Reference Number ← Client Reference
+                      - listitem [ref=f7e222]: Investigation Date ← Investigation Date
+  - button "Open Next.js Dev Tools" [ref=f7e228] [cursor=pointer]

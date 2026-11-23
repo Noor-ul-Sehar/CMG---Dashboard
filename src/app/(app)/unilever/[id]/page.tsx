@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation";
-import { getUnileverCaseById } from "@/lib/services/unilever-service";
+import { getUnileverCaseById, listUnileverBrands } from "@/lib/services/unilever-service";
 import { getSessionUser } from "@/lib/auth/session";
 import { can } from "@/lib/permissions";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/badge";
-import { LinkButton } from "@/components/ui/link-button";
+import { ErrorState } from "@/components/ui/states";
 import { InfoRow } from "@/components/cases/case-profile-parts";
 import { UnileverDeleteButton } from "@/components/unilever/unilever-delete-button";
+import { UnileverFormModal } from "@/components/unilever/unilever-form-modal";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,15 @@ export default async function UnileverCaseProfilePage({
   const user = await getSessionUser();
   const canEdit = user ? can(user, "cases.edit") : false;
 
+  let brands: { id: number; name: string }[] = [];
+  if (canEdit) {
+    try {
+      brands = await listUnileverBrands();
+    } catch {
+      return <ErrorState message="Unable to load Unilever brand data from the database." />;
+    }
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -36,9 +46,14 @@ export default async function UnileverCaseProfilePage({
           canEdit ? (
             <div className="flex items-center gap-3">
               <UnileverDeleteButton caseId={c.id} />
-              <LinkButton href={`/unilever/${id}/edit`} variant="secondary">
-                Edit Case
-              </LinkButton>
+              <UnileverFormModal
+                mode="edit"
+                caseData={c}
+                brands={brands}
+                label="Edit Case"
+                variant="secondary"
+                title={`Edit Case ${c.cmgReference}`}
+              />
             </div>
           ) : null
         }

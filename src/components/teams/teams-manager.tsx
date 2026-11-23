@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input, Textarea } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
-import { AlertIcon, SearchIcon } from "@/components/icons";
+import { AlertIcon } from "@/components/icons";
 import type { TeamRow } from "@/lib/services/org-service";
 
 interface TeamFormState {
@@ -27,6 +27,8 @@ export function TeamsManager({
 }) {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const [modal, setModal] = useState<{ mode: "create" } | { mode: "edit"; team: TeamRow } | null>(null);
   const [form, setForm] = useState<TeamFormState>(emptyForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -107,6 +109,70 @@ export function TeamsManager({
     }
   }
 
+  function openFilters() {
+    setDraftQ(q);
+    setFiltersOpen(true);
+  }
+
+  function applyFilters() {
+    setQ(draftQ);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftQ("");
+    setQ("");
+    setFiltersOpen(false);
+  }
+
+  const columns: Column<TeamRow>[] = [
+    {
+      key: "name",
+      header: "Team",
+      cell: (t) => <span className="font-medium text-zinc-900">{t.name}</span>,
+    },
+    {
+      key: "description",
+      header: "Description",
+      cell: (t) => (
+        <span className="block truncate text-zinc-600">{t.description ?? "—"}</span>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (t) =>
+        t.isActive ? (
+          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
+        ) : (
+          <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
+        ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (t) =>
+        canManage ? (
+          <div className="relative z-10 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => openEdit(t)}
+              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleActive(t)}
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
+            >
+              {t.isActive ? "Deactivate" : "Activate"}
+            </button>
+          </div>
+        ) : null,
+    },
+  ];
+
   return (
     <div className="space-y-5">
       {serverError ? (
@@ -117,87 +183,66 @@ export function TeamsManager({
       ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search teams…"
-            className="w-72 pl-9"
-            aria-label="Search teams"
-          />
-        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={openFilters}
+          aria-haspopup="dialog"
+        >
+          Filters{q ? " (1)" : ""}
+        </Button>
         <Button type="button" onClick={openCreate} disabled={!canManage} title={canManage ? undefined : "You do not have permission to create teams"}>
           New Team
         </Button>
       </div>
 
-      <Card>
-        {filtered.length === 0 ? (
-          <div className="px-6 py-12 text-center text-sm text-zinc-500">
-            {teams.length === 0
-              ? "No teams yet. Create your first team to get started."
-              : "No teams match your search."}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Team</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Description</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((t) => (
-                  <tr key={t.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                    <td className="px-4 py-3 font-medium text-zinc-900">{t.name}</td>
-                    <td className="max-w-xs px-4 py-3 text-zinc-600">
-                      <span className="block truncate">{t.description ?? "—"}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      {t.isActive ? (
-                        <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
-                      ) : (
-                        <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        {canManage ? (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => openEdit(t)}
-                              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => toggleActive(t)}
-                              className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
-                            >
-                              {t.isActive ? "Deactivate" : "Activate"}
-                            </button>
-                          </>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filter teams"
+        description="Leave blank to show all teams. Apply to update the list."
+        size="lg"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={clearFilters}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <Field label="Search" hint="Matches team name or description.">
+          <Input
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder="Search teams…"
+            aria-label="Search teams"
+          />
+        </Field>
+      </Modal>
+
+      <DataTable
+        columns={columns}
+        rows={filtered}
+        rowKey={(t) => t.id}
+        empty={
+          teams.length === 0
+            ? "No teams yet. Create your first team to get started."
+            : "No teams match your search."
+        }
+      />
 
       <Modal
         open={modal !== null}
         onClose={() => setModal(null)}
         title={modal?.mode === "edit" ? `Edit ${modal.team.name}` : "New Team"}
+        size="lg"
         description="Teams are organizational reference data and are not assigned to Market Cases."
         footer={
           <>

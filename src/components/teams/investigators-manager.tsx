@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input, Select } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
-import { AlertIcon, SearchIcon } from "@/components/icons";
+import { AlertIcon } from "@/components/icons";
 import type { InvestigatorRow, TeamRow } from "@/lib/services/org-service";
 
 interface InvestigatorFormState {
@@ -35,6 +35,8 @@ export function InvestigatorsManager({
 }) {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const [modal, setModal] = useState<
     { mode: "create" } | { mode: "edit"; investigator: InvestigatorRow } | null
   >(null);
@@ -125,6 +127,73 @@ export function InvestigatorsManager({
     }
   }
 
+  function openFilters() {
+    setDraftQ(q);
+    setFiltersOpen(true);
+  }
+
+  function applyFilters() {
+    setQ(draftQ);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftQ("");
+    setQ("");
+    setFiltersOpen(false);
+  }
+
+  const columns: Column<InvestigatorRow>[] = [
+    {
+      key: "name",
+      header: "Name",
+      cell: (i) => <span className="font-medium text-zinc-900">{i.name}</span>,
+    },
+    {
+      key: "email",
+      header: "Email",
+      cell: (i) => <span className="text-zinc-600">{i.email ?? "—"}</span>,
+    },
+    {
+      key: "team",
+      header: "Team",
+      cell: (i) => <span className="text-zinc-600">{i.teamName ?? "Unassigned"}</span>,
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (i) =>
+        i.isActive ? (
+          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
+        ) : (
+          <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
+        ),
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (i) =>
+        canManage ? (
+          <div className="relative z-10 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => openEdit(i)}
+              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={() => toggleActive(i)}
+              className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
+            >
+              {i.isActive ? "Deactivate" : "Activate"}
+            </button>
+          </div>
+        ) : null,
+    },
+  ];
+
   return (
     <div className="space-y-5">
       {serverError ? (
@@ -135,82 +204,60 @@ export function InvestigatorsManager({
       ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search investigators…"
-            className="w-72 pl-9"
-            aria-label="Search investigators"
-          />
-        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={openFilters}
+          aria-haspopup="dialog"
+        >
+          Filters{q ? " (1)" : ""}
+        </Button>
         <Button type="button" onClick={openCreate} disabled={!canManage} title={canManage ? undefined : "You do not have permission to manage investigators"}>
           New Investigator
         </Button>
       </div>
 
-      <Card>
-        {filtered.length === 0 ? (
-          <div className="px-6 py-12 text-center text-sm text-zinc-500">
-            {investigators.length === 0
-              ? "No investigators yet. Add your first investigator."
-              : "No investigators match your search."}
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Name</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Email</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Team</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((i) => (
-                  <tr key={i.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                    <td className="px-4 py-3 font-medium text-zinc-900">{i.name}</td>
-                    <td className="px-4 py-3 text-zinc-600">{i.email ?? "—"}</td>
-                    <td className="px-4 py-3 text-zinc-600">{i.teamName ?? "Unassigned"}</td>
-                    <td className="px-4 py-3">
-                      {i.isActive ? (
-                        <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
-                      ) : (
-                        <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        {canManage ? (
-                          <>
-                            <button
-                              type="button"
-                              onClick={() => openEdit(i)}
-                              className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => toggleActive(i)}
-                              className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
-                            >
-                              {i.isActive ? "Deactivate" : "Activate"}
-                            </button>
-                          </>
-                        ) : null}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filter investigators"
+        description="Leave blank to show all investigators. Apply to update the list."
+        size="lg"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={clearFilters}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <Field label="Search" hint="Matches name, email, or team.">
+          <Input
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder="Search investigators…"
+            aria-label="Search investigators"
+          />
+        </Field>
+      </Modal>
+
+      <DataTable
+        columns={columns}
+        rows={filtered}
+        rowKey={(i) => i.id}
+        empty={
+          investigators.length === 0
+            ? "No investigators yet. Add your first investigator."
+            : "No investigators match your search."
+        }
+      />
 
       <Modal
         open={modal !== null}
@@ -218,6 +265,7 @@ export function InvestigatorsManager({
         title={
           modal?.mode === "edit" ? `Edit ${modal.investigator.name}` : "New Investigator"
         }
+        size="lg"
         description="Investigators are organizational reference data and are not assigned to Market Cases."
         footer={
           <>

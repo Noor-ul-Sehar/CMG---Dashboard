@@ -3,11 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { DataTable, type Column } from "@/components/ui/data-table";
 import { Field, Input, Select } from "@/components/ui/form";
 import { Modal } from "@/components/ui/modal";
-import { AlertIcon, SearchIcon } from "@/components/icons";
+import { AlertIcon } from "@/components/icons";
 import { USER_ROLES } from "@/lib/constants";
 import { formatDate } from "@/lib/format";
 import type { PublicUser } from "@/lib/services/user-service";
@@ -40,6 +40,8 @@ export function UsersManager({
 }) {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [draftQ, setDraftQ] = useState("");
   const [modal, setModal] = useState<{ mode: "create" } | { mode: "edit"; user: PublicUser } | null>(null);
   const [resetModal, setResetModal] = useState<PublicUser | null>(null);
   const [form, setForm] = useState<UserFormState>(emptyForm);
@@ -171,6 +173,93 @@ export function UsersManager({
     }
   }
 
+  function openFilters() {
+    setDraftQ(q);
+    setFiltersOpen(true);
+  }
+
+  function applyFilters() {
+    setQ(draftQ);
+    setFiltersOpen(false);
+  }
+
+  function clearFilters() {
+    setDraftQ("");
+    setQ("");
+    setFiltersOpen(false);
+  }
+
+  const columns: Column<PublicUser>[] = [
+    {
+      key: "name",
+      header: "Name",
+      cell: (u) => <span className="font-medium text-zinc-900">{u.name}</span>,
+    },
+    {
+      key: "email",
+      header: "Email",
+      cell: (u) => <span className="text-zinc-600">{u.email}</span>,
+    },
+    {
+      key: "role",
+      header: "Role",
+      cell: (u) => (
+        <Badge className="bg-zinc-100 text-zinc-700 ring-zinc-500/20">
+          {USER_ROLES.find((r) => r.value === u.role)?.label ?? u.role}
+        </Badge>
+      ),
+    },
+    {
+      key: "team",
+      header: "Team",
+      cell: (u) => <span className="text-zinc-600">{u.teamName ?? "—"}</span>,
+    },
+    {
+      key: "status",
+      header: "Status",
+      cell: (u) =>
+        u.is_active ? (
+          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
+        ) : (
+          <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
+        ),
+    },
+    {
+      key: "lastLogin",
+      header: "Last Login",
+      cell: (u) => <span className="text-zinc-500">{formatDate(u.last_login_at)}</span>,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (u) => (
+        <div className="relative z-10 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => openEdit(u)}
+            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            onClick={() => setResetModal(u)}
+            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
+          >
+            Reset Password
+          </button>
+          <button
+            type="button"
+            onClick={() => toggleActive(u)}
+            className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
+          >
+            {u.is_active ? "Deactivate" : "Activate"}
+          </button>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="space-y-5">
       {serverError ? (
@@ -181,97 +270,62 @@ export function UsersManager({
       ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search users…"
-            className="w-72 pl-9"
-            aria-label="Search users"
-          />
-        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={openFilters}
+          aria-haspopup="dialog"
+        >
+          Filters{q ? " (1)" : ""}
+        </Button>
         <Button type="button" onClick={openCreate}>
           New User
         </Button>
       </div>
 
-      <Card>
-        {filtered.length === 0 ? (
-          <div className="px-6 py-12 text-center text-sm text-zinc-500">
-            No users match your search.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-zinc-200 bg-zinc-50/60 text-left">
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Name</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Email</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Role</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Team</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Status</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Last Login</th>
-                  <th className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-zinc-500">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((u) => {
-                  const roleLabel = USER_ROLES.find((r) => r.value === u.role)?.label ?? u.role;
-                  return (
-                    <tr key={u.id} className="border-b border-zinc-100 last:border-0 hover:bg-zinc-50/50">
-                      <td className="px-4 py-3 font-medium text-zinc-900">{u.name}</td>
-                      <td className="px-4 py-3 text-zinc-600">{u.email}</td>
-                      <td className="px-4 py-3">
-                        <Badge className="bg-zinc-100 text-zinc-700 ring-zinc-500/20">{roleLabel}</Badge>
-                      </td>
-                      <td className="px-4 py-3 text-zinc-600">{u.teamName ?? "—"}</td>
-                      <td className="px-4 py-3">
-                        {u.is_active ? (
-                          <Badge className="bg-emerald-50 text-emerald-700 ring-emerald-600/20">Active</Badge>
-                        ) : (
-                          <Badge className="bg-zinc-100 text-zinc-600 ring-zinc-500/20">Inactive</Badge>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 text-zinc-500">{formatDate(u.last_login_at)}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => openEdit(u)}
-                            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setResetModal(u)}
-                            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-                          >
-                            Reset Password
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => toggleActive(u)}
-                            className="text-sm font-medium text-zinc-500 hover:text-zinc-900"
-                          >
-                            {u.is_active ? "Deactivate" : "Activate"}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filter users"
+        description="Leave blank to show everyone. Apply to update the list."
+        size="lg"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={clearFilters}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <Field label="Search" hint="Matches name, email, or team.">
+          <Input
+            value={draftQ}
+            onChange={(e) => setDraftQ(e.target.value)}
+            placeholder="Search users…"
+            aria-label="Search users"
+          />
+        </Field>
+      </Modal>
+
+      <DataTable
+        columns={columns}
+        rows={filtered}
+        rowKey={(u) => u.id}
+        empty="No users match your search."
+      />
 
       <Modal
         open={modal !== null}
         onClose={() => setModal(null)}
         title={modal?.mode === "edit" ? `Edit ${modal.user.name}` : "New User"}
+        size="lg"
         description={
           modal?.mode === "edit"
             ? "Update account details and role."

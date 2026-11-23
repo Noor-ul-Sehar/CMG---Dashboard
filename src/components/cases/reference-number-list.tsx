@@ -2,10 +2,52 @@
 
 import { useMemo, useState } from "react";
 import { CASE_STATUSES } from "@/lib/constants";
-import { Input, Select } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { DataTable, type Column } from "@/components/ui/data-table";
+import { Field, Input, Select } from "@/components/ui/form";
+import { Modal } from "@/components/ui/modal";
 import { StatusBadge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/states";
 import type { CaseWithRefs } from "@/types";
+
+const columns: Column<CaseWithRefs>[] = [
+  {
+    key: "ref",
+    header: "CMG Ref.",
+    cell: (c) => (
+      <span className="font-medium tabular-nums text-zinc-900">{c.cmgReference}</span>
+    ),
+  },
+  {
+    key: "case",
+    header: "Case",
+    cell: (c) => <span className="text-zinc-700">{c.title ?? "Untitled"}</span>,
+  },
+  {
+    key: "target",
+    header: "Target",
+    cell: (c) => <span className="text-zinc-700">{c.targetName ?? "—"}</span>,
+  },
+  {
+    key: "nature",
+    header: "Nature",
+    cell: (c) => <span className="text-zinc-700">{c.targetNature ?? "—"}</span>,
+  },
+  {
+    key: "brands",
+    header: "Brands",
+    cell: (c) => (
+      <span className="text-zinc-700">
+        {c.brands.length ? c.brands.join(", ") : (c.brand ?? "—")}
+      </span>
+    ),
+  },
+  {
+    key: "status",
+    header: "Status",
+    cell: (c) => <StatusBadge type="case" value={c.status} />,
+  },
+];
 
 export function ReferenceNumberList({
   cases,
@@ -20,6 +62,7 @@ export function ReferenceNumberList({
   const [status, setStatus] = useState("");
   const [brand, setBrand] = useState("");
   const [nature, setNature] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -43,74 +86,102 @@ export function ReferenceNumberList({
     });
   }, [cases, q, status, brand, nature]);
 
+  const activeFilterCount = [q, status, brand, nature].filter((value) => value !== "").length;
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search reference, title, target…"
-          aria-label="Search reference numbers"
-        />
-        <Select value={status} onChange={(e) => setStatus(e.target.value)} aria-label="Case Status">
-          <option value="">All statuses</option>
-          {CASE_STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>
-              {s.label}
-            </option>
-          ))}
-        </Select>
-        <Select value={brand} onChange={(e) => setBrand(e.target.value)} aria-label="Brand">
-          <option value="">All brands</option>
-          {brands.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </Select>
-        <Select value={nature} onChange={(e) => setNature(e.target.value)} aria-label="Target Nature">
-          <option value="">All natures</option>
-          {targetNatures.map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </Select>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-zinc-500">
+          {filtered.length} reference number{filtered.length === 1 ? "" : "s"}
+        </p>
+        <Button type="button" variant="secondary" onClick={() => setFiltersOpen(true)}>
+          Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+        </Button>
       </div>
 
-      {filtered.length === 0 ? (
-        <EmptyState
-          title="No reference numbers found"
-          description="Try adjusting the search or filters."
-        />
-      ) : (
-        <ul className="divide-y divide-zinc-100">
-          {filtered.map((c) => (
-            <li key={c.id} className="py-3">
-              <a
-                href={`/cases/${c.id}`}
-                className="-mx-1 block rounded-md px-1 transition-colors hover:bg-zinc-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-900"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                  <span className="font-medium tabular-nums text-zinc-900">
-                    {c.cmgReference}
-                  </span>
-                  <StatusBadge type="case" value={c.status} />
-                </div>
-                <p className="mt-0.5 truncate text-sm text-zinc-600">
-                  {c.title ?? "Untitled"} — {c.targetName ?? "No target"}
-                  {c.targetNature ? ` · ${c.targetNature}` : ""}
-                </p>
-                {(c.brands?.length ?? 0) > 0 ? (
-                  <p className="mt-0.5 text-xs text-zinc-500">
-                    {c.brands.join(", ")}
-                  </p>
-                ) : null}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Filter reference numbers"
+        description="Narrow the list. Filters apply as you type."
+        size="lg"
+        footer={
+          <>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setQ("");
+                setStatus("");
+                setBrand("");
+                setNature("");
+              }}
+            >
+              Clear
+            </Button>
+            <Button type="button" onClick={() => setFiltersOpen(false)}>
+              Done
+            </Button>
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Search">
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search reference, title, target…"
+              aria-label="Search reference numbers"
+            />
+          </Field>
+          <Field label="Case Status">
+            <Select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              aria-label="Case Status"
+            >
+              <option value="">All statuses</option>
+              {CASE_STATUSES.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Brand">
+            <Select value={brand} onChange={(e) => setBrand(e.target.value)} aria-label="Brand">
+              <option value="">All brands</option>
+              {brands.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Target Nature">
+            <Select value={nature} onChange={(e) => setNature(e.target.value)} aria-label="Target Nature">
+              <option value="">All natures</option>
+              {targetNatures.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+      </Modal>
+
+      <DataTable
+        columns={columns}
+        rows={filtered}
+        rowHref={(c) => `/market-cases/all-cases/${c.id}`}
+        empty={
+          <EmptyState
+            title="No reference numbers found"
+            description="Try adjusting the search or filters."
+          />
+        }
+      />
     </div>
   );
 }

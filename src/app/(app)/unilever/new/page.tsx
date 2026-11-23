@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export default async function NewUnileverCasePage() {
   const user = await getSessionUser();
   if (!user || !can(user, "cases.create")) {
-    redirect("/dashboard");
+    redirect("/overview/dashboard");
   }
 
   let brands: { id: number; name: string }[];

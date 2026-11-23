@@ -5,6 +5,7 @@ import { db } from "./client.ts";
 async function migrate() {
   const sql = readFileSync(path.join(process.cwd(), "src/lib/db/schema.sql"), "utf8");
   await db.query(sql);
+  await db.query("ALTER TABLE cases ALTER COLUMN report_status SET DEFAULT 'pending_approval'");
   console.log("Schema applied successfully.");
   await db.end();
 }

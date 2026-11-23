@@ -15,6 +15,25 @@ import { StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/form";
 import { EmptyState, ErrorState } from "@/components/ui/states";
+import { Modal } from "@/components/ui/modal";
+
+type FilterState = {
+  q: string;
+  status: string;
+  targetBy: string;
+  targetNature: string;
+  brand: string;
+  clientReference: string;
+};
+
+const EMPTY_FILTERS: FilterState = {
+  q: "",
+  status: "",
+  targetBy: "",
+  targetNature: "",
+  brand: "",
+  clientReference: "",
+};
 
 function tableColumns(): Column<CaseWithRefs>[] {
   return [
@@ -23,7 +42,7 @@ function tableColumns(): Column<CaseWithRefs>[] {
       header: "CMG Ref.",
       cell: (r) => (
         <a
-          href={`/cases/${r.id}`}
+          href={`/market-cases/all-cases/${r.id}`}
           className="font-medium tabular-nums text-zinc-900 underline-offset-2 hover:underline"
         >
           {r.cmgReference}
@@ -44,7 +63,11 @@ function tableColumns(): Column<CaseWithRefs>[] {
         </span>
       ),
     },
-    { key: "brand", header: "Brand", cell: (r) => (r.brands?.length ? r.brands.join(", ") : r.brand ?? "—") },
+    {
+      key: "brand",
+      header: "Brand",
+      cell: (r) => (r.brands?.length ? r.brands.join(", ") : r.brand ?? "—"),
+    },
     {
       key: "status",
       header: "Case Status",
@@ -78,22 +101,29 @@ export function ReportsDashboard({
   canExport: boolean;
 }) {
   const [type, setType] = useState<(typeof REPORT_TYPES)[number]>("all");
-  const [filters, setFilters] = useState({
-    q: "",
-    status: "",
-    targetBy: "",
-    targetNature: "",
-    brand: "",
-    clientReference: "",
-  });
+  const [filters, setFilters] = useState<FilterState>(EMPTY_FILTERS);
+  const [draft, setDraft] = useState<FilterState>(EMPTY_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ReportResult | null>(null);
 
-  const set = (key: keyof typeof filters) =>
+  const set = (key: keyof FilterState) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      setFilters((prev) => ({ ...prev, [key]: e.target.value }));
+      setDraft((prev) => ({ ...prev, [key]: e.target.value }));
     };
+
+  const openFilters = () => {
+    setDraft(filters);
+    setFiltersOpen(true);
+  };
+
+  const applyFilters = () => {
+    setFilters(draft);
+    setFiltersOpen(false);
+  };
+
+  const activeFilterCount = Object.values(filters).filter((value) => value.trim() !== "").length;
 
   const runReport = useCallback(async () => {
     setLoading(true);
@@ -145,56 +175,14 @@ export function ReportsDashboard({
       </Card>
 
       <Card>
-        <CardHeader title="Filters" subtitle="Narrow the report down. Leave fields blank to include everything." />
-        <div className="grid grid-cols-1 gap-4 px-5 py-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="CMG Reference">
-            <Input value={filters.q} onChange={set("q")} placeholder="e.g. CMG-2024-0001" />
-          </Field>
-          <Field label="Client Reference">
-            <Input value={filters.clientReference} onChange={set("clientReference")} placeholder="e.g. ARO-1123" />
-          </Field>
-          <Field label="Case Status">
-            <Select value={filters.status} onChange={set("status")}>
-              <option value="">All statuses</option>
-              {options.statuses.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Target By">
-            <Select value={filters.targetBy} onChange={set("targetBy")}>
-              <option value="">All targeted by</option>
-              {options.targetBy.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Target Nature">
-            <Select value={filters.targetNature} onChange={set("targetNature")}>
-              <option value="">All natures</option>
-              {options.targetNatures.map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Brand">
-            <Select value={filters.brand} onChange={set("brand")}>
-              <option value="">All brands</option>
-              {options.brands.map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
-              ))}
-            </Select>
-          </Field>
-        </div>
+        <CardHeader
+          title="Filters"
+          subtitle="Narrow the report down, then run the report to apply changes."
+        />
         <div className="flex flex-wrap items-center gap-3 border-t border-zinc-100 px-5 py-4">
+          <Button type="button" variant="secondary" onClick={openFilters}>
+            Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+          </Button>
           <Button onClick={runReport} disabled={loading}>
             {loading ? "Running…" : "Run Report"}
           </Button>
@@ -216,6 +204,76 @@ export function ReportsDashboard({
           ) : null}
         </div>
       </Card>
+
+      <Modal
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        title="Report filters"
+        description="Leave fields blank to include everything. Apply to update the report query."
+        size="xl"
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={() => setDraft(EMPTY_FILTERS)}>
+              Clear
+            </Button>
+            <Button type="button" variant="secondary" onClick={() => setFiltersOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyFilters}>
+              Apply
+            </Button>
+          </>
+        }
+      >
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Field label="CMG Reference">
+            <Input value={draft.q} onChange={set("q")} placeholder="e.g. CMG-2024-0001" />
+          </Field>
+          <Field label="Client Reference">
+            <Input value={draft.clientReference} onChange={set("clientReference")} placeholder="e.g. ARO-1123" />
+          </Field>
+          <Field label="Case Status">
+            <Select value={draft.status} onChange={set("status")}>
+              <option value="">All statuses</option>
+              {options.statuses.map((s) => (
+                <option key={s.value} value={s.value}>
+                  {s.label}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Target By">
+            <Select value={draft.targetBy} onChange={set("targetBy")}>
+              <option value="">All targeted by</option>
+              {options.targetBy.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Target Nature">
+            <Select value={draft.targetNature} onChange={set("targetNature")}>
+              <option value="">All natures</option>
+              {options.targetNatures.map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </Select>
+          </Field>
+          <Field label="Brand">
+            <Select value={draft.brand} onChange={set("brand")}>
+              <option value="">All brands</option>
+              {options.brands.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        </div>
+      </Modal>
 
       {error ? (
         <ErrorState title="Could not run the report" message={error} />

@@ -12,6 +12,7 @@ import { LinkButton } from "@/components/ui/link-button";
 import { StatCard } from "@/components/ui/stat-card";
 import { EmptyState } from "@/components/ui/states";
 import { UnileverFilters } from "./unilever-filters";
+import { UnileverFormModal } from "./unilever-form-modal";
 import { Pagination } from "@/components/cases/pagination";
 import { ChevronRightIcon } from "@/components/icons";
 import type { UnileverCase } from "@/types";
@@ -49,7 +50,7 @@ function BrandsCell({ row }: { row: UnileverCase }) {
   );
 }
 
-function columns(): Column<UnileverCase>[] {
+function columns(brands: { id: number; name: string }[]): Column<UnileverCase>[] {
   return [
     {
       key: "ref",
@@ -72,7 +73,11 @@ function columns(): Column<UnileverCase>[] {
         </span>
       ),
     },
-    { key: "brand", header: "Brand", cell: (r) => <BrandsCell row={r} /> },
+    {
+      key: "brand",
+      header: "Brand",
+      cell: (r) => <BrandsCell row={r} />,
+    },
     {
       key: "targetBy",
       header: "Target By",
@@ -109,9 +114,15 @@ function columns(): Column<UnileverCase>[] {
           <LinkButton href={`/unilever/${r.id}`} variant="ghost" size="sm">
             View
           </LinkButton>
-          <LinkButton href={`/unilever/${r.id}/edit`} variant="ghost" size="sm">
-            Edit
-          </LinkButton>
+          <UnileverFormModal
+            mode="edit"
+            caseData={r}
+            brands={brands}
+            label="Edit"
+            variant="ghost"
+            size="sm"
+            title={`Edit Case ${r.cmgReference}`}
+          />
         </div>
       ),
     },
@@ -147,14 +158,14 @@ export async function UnileverView({ searchParams }: UnileverViewProps) {
       <PageHeader
         title="Unilever Cases"
         description="Independent Unilever case-management module."
-        actions={<LinkButton href="/unilever/new">New Unilever Case</LinkButton>}
+        actions={<UnileverFormModal mode="new" brands={options} label="New Unilever Case" />}
       />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <StatCard label="Total Unilever Cases" value={stats.total} accent="text-zinc-900" href="/unilever" />
-        <StatCard label="Open" value={stats.open} accent="text-emerald-700" href="/unilever?status=open" />
-        <StatCard label="Close 1" value={stats.close_1} accent="text-zinc-600" href="/unilever?status=close_1" />
-        <StatCard label="Closed" value={stats.close} accent="text-zinc-600" href="/unilever?status=close" />
+        <StatCard label="Total Unilever Cases" value={stats.total} accent="text-zinc-900" href="/unilever/cases" />
+        <StatCard label="Open" value={stats.open} accent="text-emerald-700" href="/unilever/cases?status=open" />
+        <StatCard label="Close 1" value={stats.close_1} accent="text-zinc-600" href="/unilever/cases?status=close_1" />
+        <StatCard label="Closed" value={stats.close} accent="text-zinc-600" href="/unilever/cases?status=close" />
       </div>
 
       <UnileverFilters brands={options.map((b) => b.name)} />
@@ -175,12 +186,18 @@ export async function UnileverView({ searchParams }: UnileverViewProps) {
             <EmptyState
               title="No Unilever Cases yet"
               description="Create your first Unilever case to get started."
-              action={<LinkButton href="/unilever/new">+ New Unilever Case</LinkButton>}
+              action={
+                <UnileverFormModal
+                  mode="new"
+                  brands={options}
+                  label="+ New Unilever Case"
+                />
+              }
             />
           )
         ) : (
           <DataTable
-            columns={columns()}
+            columns={columns(options)}
             rows={rows}
             rowHref={(row) => `/unilever/${row.id}`}
           />
