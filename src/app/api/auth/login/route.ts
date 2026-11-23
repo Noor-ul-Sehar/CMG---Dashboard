@@ -64,13 +64,18 @@ export async function POST(request: Request) {
 
   try {
     await createSession(user);
-    await logLoginSuccess(user.id, getIp(request));
   } catch (err) {
     console.error("session setup failed:", err);
     return NextResponse.json(
       { error: "Unable to log in. Please try again." },
       { status: 500 }
     );
+  }
+
+  try {
+    await logLoginSuccess(user.id, getIp(request));
+  } catch (err) {
+    console.error("login success logging failed:", err);
   }
 
   return NextResponse.json({ user: publicUser(user) });
